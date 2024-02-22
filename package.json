@@ -1,0 +1,26 @@
+{
+  "name": "poizon-tilda",
+  "version": "1.0.0",
+  "description": "Poizon Tilda Backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "Ganz Agency",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/joi": "^15.0.3",
+    "axios": "^1.6.7",
+    "body-parser": "^1.19.0",
+    "bottleneck": "^2.19.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^4.6.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
