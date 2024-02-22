@@ -30,7 +30,8 @@ const config = {
     },
     defaultPageSize: 6,
     server: {
-        port: 5555
+        port: 5555,
+        timeout: '15s'
     }
 }
 
