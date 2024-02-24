@@ -44,6 +44,14 @@ router.get("/search", async (req, res) => {
     );
 });
 
+router.get('/js', async (req, res) => {
+    res.sendFile(config.server.jsFile)
+})
+
+router.get('/css', async (req, res) => {
+    res.sendFile(config.server.cssFile)
+})
+
 router.all("*", function (req, res) {
     res.status(404).json(generateResponse(true, "Unknown route"));
 });

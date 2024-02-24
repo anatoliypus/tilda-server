@@ -31,7 +31,9 @@ const config = {
     defaultPageSize: 6,
     server: {
         port: 5555,
-        timeout: '15s'
+        timeout: '15s',
+        jsFile: '/Users/tolyasek/Desktop/tilda-catalog/build/static/js/main.js',
+        cssFile: '/Users/tolyasek/Desktop/tilda-catalog/build/static/css/main.css',
     }
 }
 
