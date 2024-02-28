@@ -20,6 +20,19 @@ const getProductDetail = async (spuId) => {
     return json
 }
 
+const searchProductsPoizon = async (key, page, pageSize) => {
+    var options = {
+        method: "GET",
+        url: `https://poison-api.com/Dewu/search?keyword=${key}&limit=${pageSize}&page=${page}`,
+        headers: {
+            apiKey: config.poizonApi.apiKey,
+        },
+    };
+    const response = await limiter.schedule(() => request(options))
+    const json = JSON.parse(response)
+    return json
+}
+
 const getProductPrice = async (spuId) => {
     var options = {
         method: "GET",
@@ -33,4 +46,4 @@ const getProductPrice = async (spuId) => {
     return json
 };
 
-module.exports = {getProductDetail, getProductPrice}
+module.exports = {getProductDetail, getProductPrice, searchProductsPoizon}

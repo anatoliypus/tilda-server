@@ -1,6 +1,6 @@
 const express = require("express");
 const { toPositiveInt } = require("../utils/utils");
-const { catalogHandler, itemHandler, searchHandler } = require("./handlers");
+const { catalogHandler, itemHandler, searchHandler, searchPoizonHandler } = require("./handlers");
 const { config } = require("../config");
 
 const router = express.Router();
@@ -28,6 +28,20 @@ router.get("/product", async (req, res) => {
             .json(generateResponse(true, "Please specify right id format."));
     res.status(200).json(generateResponse(false, "ok", await itemHandler(id)));
 });
+
+router.get("/searchPoizon", async (req, res) => {
+    let key = req.query.key;
+    let page = 0
+    let pageSize = 5
+
+    if (!key)
+        return res
+            .status(400)
+            .json(generateResponse(true, "Please specify right search key."));
+    res.status(200).json(
+        generateResponse(false, "ok", await searchPoizonHandler(key, page, pageSize))
+    );
+})
 
 router.get("/search", async (req, res) => {
     let key = req.query.key;

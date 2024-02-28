@@ -1,4 +1,6 @@
+const { searchProductsPoizon } = require('../apiService/apiService')
 const { searchProducts, getProductInfo, getPaginatedCatalog, updatePrices } = require('../db/db')
+
 
 const catalogHandler = async (page, pageSize, gender) => {
     let products = await getPaginatedCatalog(page, pageSize, gender)
@@ -16,6 +18,13 @@ const searchHandler = async (key, page, pageSize, gender) => {
     }
 }
 
+const searchPoizonHandler = async (key, page, pageSize) => {
+    let products = await searchProductsPoizon(key, page, pageSize)
+    return {
+        products
+    }
+}
+
 const itemHandler = async (id) => {
     let product = await getProductInfo(id);
     product = await updatePrices([product])
@@ -23,4 +32,4 @@ const itemHandler = async (id) => {
     return product
 }
 
-module.exports = {catalogHandler, searchHandler, itemHandler}
+module.exports = {catalogHandler, searchHandler, itemHandler, searchPoizonHandler}
