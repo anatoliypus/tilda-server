@@ -70,6 +70,10 @@ router.get('/css', async (req, res) => {
     res.sendFile(config.server.cssFile)
 })
 
+router.get('/demoPrices', async (req, res) => {
+    res.sendFile(config.server.demoHTML)
+})
+
 router.all("*", function (req, res) {
     res.status(404).json(generateResponse(true, "Unknown route"));
 });

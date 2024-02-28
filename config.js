@@ -34,6 +34,7 @@ const config = {
         timeout: '15s',
         jsFile: '/root/data/tilda-catalog/build/static/js/main.js',
         cssFile: '/root/data/tilda-catalog/build/static/css/main.css',
+        demoHTML: '/root/data/demoPrices/main.html'
     }
 }
 
