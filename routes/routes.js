@@ -26,7 +26,6 @@ router.get("/product", async (req, res) => {
     let cache = req.query.cache
     if (cache == '0') cache = false
     else cache = true
-    console.log(cache)
     if (!id)
         return res
             .status(400)

@@ -25,7 +25,7 @@ const searchPoizonHandler = async (key, page, pageSize) => {
     }
 }
 
-const itemHandler = async (id, cache=true) => {
+const itemHandler = async (id, cache) => {
     let product = await getProductInfo(id);
     product = await updatePrices([product], cache)
     product = product[0]
