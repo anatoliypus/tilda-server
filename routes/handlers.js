@@ -21,7 +21,7 @@ const searchHandler = async (key, page, pageSize, gender) => {
 const searchPoizonHandler = async (key, page, pageSize) => {
     let products = await searchProductsPoizon(key, page, pageSize)
     return {
-        products
+        products: products.data
     }
 }
 
