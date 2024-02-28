@@ -18,7 +18,7 @@ const init = () =>
         }
     );
 
-const updatePrices = async (items) => {
+const updatePrices = async (items, cache=true) => {
     const shouldUpdate = [];
     const promises = [];
     const result = [];
@@ -29,7 +29,7 @@ const updatePrices = async (items) => {
                     item &&
                     (!item.apiPrices ||
                         !item.apiPricesUpdated ||
-                        Date.now() - item.apiPricesUpdated > config.db.pricesCache)
+                        (cache && Date.now() - item.apiPricesUpdated > config.db.pricesCache))
                 ) {
                     const prices = await getProductPrice(item.productId);
                     const priceResult = {};

@@ -2,6 +2,7 @@ const express = require("express");
 const { toPositiveInt } = require("../utils/utils");
 const { catalogHandler, itemHandler, searchHandler, searchPoizonHandler } = require("./handlers");
 const { config } = require("../config");
+const boolean = require("@hapi/joi/lib/types/boolean");
 
 const router = express.Router();
 
@@ -22,11 +23,14 @@ router.get("/catalog", async (req, res) => {
 
 router.get("/product", async (req, res) => {
     let id = toPositiveInt(req.query.id);
+    let cache = req.query.cache || 1
+    if (cache != 0 && cache != 1) cache = 1
+    cache = Boolean(cache)
     if (!id)
         return res
             .status(400)
             .json(generateResponse(true, "Please specify right id format."));
-    res.status(200).json(generateResponse(false, "ok", await itemHandler(id)));
+    res.status(200).json(generateResponse(false, "ok", await itemHandler(id, cache)));
 });
 
 router.get("/searchPoizon", async (req, res) => {
