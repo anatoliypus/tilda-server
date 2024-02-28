@@ -23,7 +23,7 @@ router.get("/catalog", async (req, res) => {
 
 router.get("/product", async (req, res) => {
     let id = toPositiveInt(req.query.id);
-    let cache = req.query.cache || 1
+    let cache = req.query.cache
     if (cache != 0 && cache != 1) cache = 1
     cache = Boolean(cache)
     if (!id)
