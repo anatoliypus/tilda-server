@@ -18,7 +18,7 @@ const init = () =>
         }
     );
 
-const updatePrices = async (items, cache) => {
+const updatePrices = async (items, cache=true) => {
     const shouldUpdate = [];
     const promises = [];
     const result = [];
@@ -95,7 +95,7 @@ const updatePrices = async (items, cache) => {
     return result;
 };
 
-const baseGetProducts = async (page, pageSize, gender, key=null) => {
+const baseGetProducts = async (page, pageSize, gender, key=null, category=null, sort=null) => {
     const collection = db.collection(config.db.collections.products);
     let matchParameter, genderParameter
     if (gender == config.genders.client.woman) {
@@ -131,6 +131,12 @@ const baseGetProducts = async (page, pageSize, gender, key=null) => {
         }
     }
 
+    // if (category) {
+    //     matchParameter.$and.push({
+
+    //     })
+    // }
+
     let products = await collection
         .aggregate([
             {
@@ -163,7 +169,7 @@ const baseGetProducts = async (page, pageSize, gender, key=null) => {
 };
 
 const searchProducts = async (key, page, pageSize, gender) => {
-    return baseGetProducts(page, pageSize, gender, key)
+    return baseGetProducts(page, pageSize, gender, key=key)
 };
 
 const getProductVariant = async (variantId) => {
@@ -184,8 +190,8 @@ const getProductInfo = async (id) => {
     return result;
 };
 
-const getPaginatedCatalog = async (page, pageSize, gender) => {
-    return baseGetProducts(page, pageSize, gender)
+const getPaginatedCatalog = async (page, pageSize, gender, category, sort) => {
+    return baseGetProducts(page, pageSize, gender, category=category, sort=sort)
 };
 
 const close = () => {

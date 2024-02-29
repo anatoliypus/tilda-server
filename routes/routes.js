@@ -16,8 +16,12 @@ router.get("/catalog", async (req, res) => {
     let page = toPositiveInt(req.query.page) || 1;
     let pageSize = toPositiveInt(req.query.pageSize) || config.defaultPageSize;
     let gender = (req.query.gender && Object.values(config.genders.client).includes(req.query.gender) && req.query.gender) || config.genders.client.all
+    let category = req.query.category || null
+    let sort = req.query.sort
+    if (sort != 'popularity') sort = null
+
     res.status(200).json(
-        generateResponse(false, "ok", await catalogHandler(page, pageSize, gender))
+        generateResponse(false, "ok", await catalogHandler(page, pageSize, gender, category, sort))
     );
 });
 

@@ -2,8 +2,8 @@ const { searchProductsPoizon } = require('../apiService/apiService')
 const { searchProducts, getProductInfo, getPaginatedCatalog, updatePrices } = require('../db/db')
 
 
-const catalogHandler = async (page, pageSize, gender) => {
-    let products = await getPaginatedCatalog(page, pageSize, gender)
+const catalogHandler = async (page, pageSize, gender, category, sort) => {
+    let products = await getPaginatedCatalog(page, pageSize, gender, category, sort)
     products = await updatePrices(products)
     return {
         products
