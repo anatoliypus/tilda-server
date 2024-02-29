@@ -12,6 +12,7 @@ const catalogHandler = async (page, pageSize, gender, category, sort) => {
 }
 
 const searchHandler = async (key, page, pageSize, gender) => {
+    console.log('search')
     let products = await searchProducts(key, page, pageSize, gender)
     products = await updatePrices(products)
     return {
