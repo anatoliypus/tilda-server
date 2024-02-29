@@ -99,6 +99,7 @@ const updatePrices = async (items, cache = true) => {
 };
 
 const getChildCategories = async (parentCategory) => {
+    console.log(parentCategory)
     const aggr = [
         {
             $match: {
