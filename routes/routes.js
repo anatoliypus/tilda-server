@@ -118,7 +118,7 @@ router.get("/setRate", async (req, res) => {
     fs.readFile("../utils/ratesToken.txt", "utf8", (err, data) => {
         if (err) {
             res.status(500).json(
-                generateResponse(true, "неизвестная ошибка: " + err + path.dirname())
+                generateResponse(true, "неизвестная ошибка: " + err + __dirname)
             );
         } else {
             const token = req.query.token == data;
