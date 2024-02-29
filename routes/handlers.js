@@ -3,6 +3,7 @@ const { searchProducts, getProductInfo, getPaginatedCatalog, updatePrices } = re
 
 
 const catalogHandler = async (page, pageSize, gender, category, sort) => {
+    console.log(category)
     let products = await getPaginatedCatalog(page, pageSize, gender, category, sort)
     products = await updatePrices(products)
     return {
