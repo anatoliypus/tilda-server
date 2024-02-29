@@ -4,6 +4,7 @@ const {
     getProductDetail,
     getProductPrice,
 } = require("../apiService/apiService");
+const { calculatePrice } = require("../utils/pricing");
 
 const connectionUrl = config.db.url;
 const dbName = config.db.dbName;
@@ -66,7 +67,7 @@ const updatePrices = async (items, cache = true) => {
                             prices[variantId].prices[0].price
                         ) {
                             priceResult[sizeText] =
-                                prices[variantId].prices[0].price;
+                                calculatePrice(prices[variantId].prices[0].price)
                         }
                     }
                     item.apiPrices = priceResult;
