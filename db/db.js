@@ -99,7 +99,6 @@ const updatePrices = async (items, cache = true) => {
 };
 
 const getChildCategories = async (parentCategory) => {
-    console.log(parentCategory)
     const aggr = [
         {
             $match: {
@@ -126,7 +125,7 @@ const getChildCategories = async (parentCategory) => {
             },
         },
     ];
-    const collection = db.collection(config.db.collections.products);
+    const collection = db.collection(config.db.collections.categories);
     const childs = await collection.aggregate(aggr).toArray();
     console.log(childs)
     return childs[0].data;
