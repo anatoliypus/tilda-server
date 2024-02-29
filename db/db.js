@@ -160,6 +160,7 @@ const baseGetProducts = async (
     if (key) matchParameter.$and.push({ $text: { $search: key } });
 
     let resultCategoryId = null;
+    console.log(category)
     if (category && category == "shoes") {
         resultCategoryId = 29;
     }
