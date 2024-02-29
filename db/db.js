@@ -127,6 +127,7 @@ const getChildCategories = async (parentCategory) => {
     ];
     const collection = db.collection(config.db.collections.products);
     const childs = await collection.aggregate(aggr).toArray();
+    console.log(childs)
     return childs[0].data;
 };
 
