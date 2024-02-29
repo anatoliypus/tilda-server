@@ -121,9 +121,7 @@ router.get("/setRate", async (req, res) => {
                 generateResponse(true, "неизвестная ошибка: " + err)
             );
         } else {
-            console.log(data)
-            console.log(req.query.token)
-            const token = req.query.token == data;
+            const token = req.query.token == data.trim();
 
             if (!token)
                 res.status(403).json(generateResponse(true, "неверный токен"));
