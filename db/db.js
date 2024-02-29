@@ -164,9 +164,7 @@ const baseGetProducts = async (
 
     if (resultCategoryId) {
         const childs = await getChildCategories(resultCategoryId);
-        console.log(childs)
         const ids = childs.map((v) => v.id);
-        console.log(ids)
         matchParameter.$and.push({
             categoryId: {$in: ids}
         })
