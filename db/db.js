@@ -139,6 +139,8 @@ const baseGetProducts = async (
     sort = null
 ) => {
     const collection = db.collection(config.db.collections.products);
+    await collection.createIndex({ title: "text" });
+
     let genderParameter = {
         $or: [{ gender: { $eq: config.genders.db.all } }],
     };
