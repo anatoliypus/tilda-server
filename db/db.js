@@ -18,7 +18,7 @@ const init = () =>
         }
     );
 
-const updatePrices = async (items, cache=true) => {
+const updatePrices = async (items, cache = true) => {
     const shouldUpdate = [];
     const promises = [];
     const result = [];
@@ -28,30 +28,32 @@ const updatePrices = async (items, cache=true) => {
                 if (
                     item &&
                     (!item.apiPrices ||
-                        !item.apiPricesUpdated || !cache
-                        || Date.now() - item.apiPricesUpdated > config.db.pricesCache)
+                        !item.apiPricesUpdated ||
+                        !cache ||
+                        Date.now() - item.apiPricesUpdated >
+                            config.db.pricesCache)
                 ) {
                     const prices = await getProductPrice(item.productId);
                     const priceResult = {};
-                    const variantIdSizeMapping = item.variantIdSizeMapping || {}
-                    let variantIdSizeMappingUpdated = false
+                    const variantIdSizeMapping =
+                        item.variantIdSizeMapping || {};
+                    let variantIdSizeMappingUpdated = false;
                     for (const variantId in prices) {
                         let sizeText = variantIdSizeMapping[variantId];
                         if (!sizeText) {
                             const variant = await getProductVariant(variantId);
                             if (variant.params && variant.params.length) {
                                 const size = variant.params.find(
-                                    (v) =>
-                                        v.key && v.key == 'размер'
+                                    (v) => v.key && v.key == "размер"
                                 );
                                 if (size && size.value) {
                                     sizeText = size.value;
-                                    variantIdSizeMapping[variantId] = sizeText
-                                    variantIdSizeMappingUpdated = true
+                                    variantIdSizeMapping[variantId] = sizeText;
+                                    variantIdSizeMappingUpdated = true;
                                 } else {
-                                    sizeText = config.db.oneSizePlaceholder
-                                    variantIdSizeMapping[variantId] = sizeText
-                                    variantIdSizeMappingUpdated = true
+                                    sizeText = config.db.oneSizePlaceholder;
+                                    variantIdSizeMapping[variantId] = sizeText;
+                                    variantIdSizeMappingUpdated = true;
                                 }
                             }
                         }
@@ -69,7 +71,8 @@ const updatePrices = async (items, cache=true) => {
                     }
                     item.apiPrices = priceResult;
                     item.apiPricesUpdated = Date.now();
-                    if (variantIdSizeMappingUpdated) item.variantIdSizeMapping = variantIdSizeMapping
+                    if (variantIdSizeMappingUpdated)
+                        item.variantIdSizeMapping = variantIdSizeMapping;
                     shouldUpdate.push(item);
                 }
                 result.push(item);
@@ -86,7 +89,7 @@ const updatePrices = async (items, cache=true) => {
             $set: {
                 apiPrices: el.apiPrices,
                 apiPricesUpdated: el.apiPricesUpdated,
-                variantIdSizeMapping: el.variantIdSizeMapping
+                variantIdSizeMapping: el.variantIdSizeMapping,
             },
         };
         await collection.updateOne(filter, updateDocument);
@@ -95,81 +98,111 @@ const updatePrices = async (items, cache=true) => {
     return result;
 };
 
-const baseGetProducts = async (page, pageSize, gender, key=null, category=null, sort=null) => {
-    const collection = db.collection(config.db.collections.products);
-    let matchParameter, genderParameter
-    if (gender == config.genders.client.woman) {
-        genderParameter = {
-            $or: [
-                {gender: {$eq: config.genders.db.woman}},
-                {gender: {$eq: config.genders.db.all}},
-            ]
-        }
-    } else if (gender == config.genders.client.man) {
-        genderParameter = {
-            $or: [
-                {gender: {$eq: config.genders.db.man}},
-                {gender: {$eq: config.genders.db.all}},
-            ]
-        }
-    } else {
-        genderParameter = {
-            $or: [
-                {gender: {$eq: config.genders.db.man}},
-                {gender: {$eq: config.genders.db.woman}},
-                {gender: {$eq: config.genders.db.all}},
-            ]
-        }
-    }
-
-    if (!key) matchParameter = genderParameter
-    else {
-        matchParameter = {
-            $and: [
-                genderParameter, {$text: { $search: key },}
-            ]
-        }
-    }
-
-    // if (category) {
-    //     matchParameter.$and.push({
-
-    //     })
-    // }
-
-    let products = await collection
-        .aggregate([
-            {
-                $match: matchParameter
+const getChildCategories = async (parentCategory) => {
+    const aggr = [
+        {
+            $match: {
+                id: parentCategory,
             },
-            {
-                $facet: {
-                    metadata: [{ $count: "totalCount" }],
-                    data: [
-                        { $skip: (page - 1) * pageSize },
-                        { $limit: pageSize },
-                        {
-                            $project: {
-                                _id: 1,
-                                title: 1,
-                                price: 1,
-                                images: 1,
-                                productId: 1,
-                                apiPrices: 1,
-                                apiPricesUpdated: 1,
-                                variantIdSizeMapping: 1
-                            },
-                        },
-                    ],
+        },
+        {
+            $graphLookup: {
+                from: "Categories",
+                startWith: "$id",
+                connectFromField: "id",
+                connectToField: "parentId",
+                as: "childs",
+                maxDepth: 20,
+            },
+        },
+        {
+            $project: {
+                name: 1,
+                childs: {
+                    id: 1,
+                    name: 1,
                 },
             },
-        ])
-        .toArray();
+        },
+    ];
+    const collection = db.collection(config.db.collections.products);
+    const childs = await collection.aggregate(aggregation).toArray();
+    return childs[0].data;
+};
+
+const baseGetProducts = async (
+    page,
+    pageSize,
+    gender,
+    key = null,
+    category = null,
+    sort = null
+) => {
+    const collection = db.collection(config.db.collections.products);
+    let genderParameter = {
+        $or: [{ gender: { $eq: config.genders.db.all } }],
+    };
+    if (gender == config.genders.client.woman) {
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.woman } });
+    } else if (gender == config.genders.client.man) {
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.man } });
+    } else {
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.man } });
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.woman } });
+    }
+
+    let matchParameter = {
+        $and: [genderParameter],
+    };
+
+    if (key) matchParameter.$and.push({ $text: { $search: key } });
+
+    let resultCategoryId = null;
+    if (category && category == "shoes") {
+        resultCategoryId = 29;
+    }
+
+    if (resultCategoryId) {
+        const childs = await getChildCategories(resultCategoryId);
+        const ids = childs.childs.forEach((v) => v.id);
+        matchParameter.$and.push({
+            categoryId: {$in: ids}
+        })
+    }
+
+    const aggregation = [
+        {
+            $match: matchParameter,
+        },
+        {
+            $facet: {
+                metadata: [{ $count: "totalCount" }],
+                data: [
+                    { $skip: (page - 1) * pageSize },
+                    { $limit: pageSize },
+                    {
+                        $project: {
+                            _id: 1,
+                            title: 1,
+                            price: 1,
+                            images: 1,
+                            productId: 1,
+                            apiPrices: 1,
+                            apiPricesUpdated: 1,
+                            variantIdSizeMapping: 1,
+                        },
+                    },
+                ],
+            },
+        },
+    ];
+
+    let products = await collection.aggregate(aggregation).toArray();
     return products[0].data;
 };
 
 const searchProducts = async (key, page, pageSize, gender) => {
-    return baseGetProducts(page, pageSize, gender, key=key)
+    return baseGetProducts(page, pageSize, gender, (key = key));
 };
 
 const getProductVariant = async (variantId) => {
@@ -191,7 +224,13 @@ const getProductInfo = async (id) => {
 };
 
 const getPaginatedCatalog = async (page, pageSize, gender, category, sort) => {
-    return baseGetProducts(page, pageSize, gender, category=category, sort=sort)
+    return baseGetProducts(
+        page,
+        pageSize,
+        gender,
+        (category = category),
+        (sort = sort)
+    );
 };
 
 const close = () => {
