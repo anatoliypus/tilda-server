@@ -99,11 +99,18 @@ const updatePrices = async (items, cache = true) => {
 };
 
 const getChildCategories = async (parentCategory) => {
+    let match = {
+        id: parentCategory,
+    }
+    if (Array.isArray(parentCategory)) {
+        match = {
+            id: {$in: parentCategory}
+        }
+    }
+
     const aggr = [
         {
-            $match: {
-                id: parentCategory,
-            },
+            $match: match
         },
         {
             $graphLookup: {
@@ -165,7 +172,7 @@ const baseGetProducts = async (
         resultCategoryId = 92;
     }
     if (category && category == "clothes") {
-        resultCategoryId = 2;
+        resultCategoryId = [2, 1000095];
     }
 
     if (resultCategoryId) {
