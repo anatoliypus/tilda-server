@@ -1,6 +1,6 @@
 const express = require("express");
 const { toPositiveInt } = require("../utils/utils");
-const { catalogHandler, itemHandler, searchHandler, searchPoizonHandler } = require("./handlers");
+const { catalogHandler, itemHandler, searchHandler, searchPoizonHandler, brandsHandler } = require("./handlers");
 const { config } = require("../config");
 const boolean = require("@hapi/joi/lib/types/boolean");
 
@@ -65,6 +65,13 @@ router.get("/search", async (req, res) => {
         generateResponse(false, "ok", await searchHandler(key, page, pageSize, gender))
     );
 });
+
+router.get("/brands", async (req, res) => {
+    res.status(200).json(
+        generateResponse(false, "ok", await brandsHandler())
+    );
+});
+
 
 router.get('/js', async (req, res) => {
     res.sendFile(config.server.jsFile)

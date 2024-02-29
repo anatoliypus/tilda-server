@@ -218,6 +218,12 @@ const searchProducts = async (key, page, pageSize, gender) => {
     return baseGetProducts(page, pageSize, gender, { key });
 };
 
+const getBrandsList = async () => {
+    const collection = db.collection(config.db.collections.brands);
+    const result = await collection.find().toArray();
+    return result;
+}
+
 const getProductVariant = async (variantId) => {
     const collection = db.collection(config.db.collections.productVariants);
     const query = {
@@ -255,5 +261,6 @@ module.exports = {
     getProductInfo,
     getPaginatedCatalog,
     updatePrices,
+    getBrandsList,
     close,
 };
