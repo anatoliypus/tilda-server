@@ -128,7 +128,7 @@ const getChildCategories = async (parentCategory) => {
     const collection = db.collection(config.db.collections.categories);
     const childs = await collection.aggregate(aggr).toArray();
     console.log(childs)
-    return childs[0].childs;
+    return childs[0];
 };
 
 const baseGetProducts = async (
@@ -159,7 +159,6 @@ const baseGetProducts = async (
     if (key) matchParameter.$and.push({ $text: { $search: key } });
 
     let resultCategoryId = null;
-    console.log(category)
     if (category && category == "shoes") {
         resultCategoryId = 29;
     }
