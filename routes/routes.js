@@ -115,7 +115,7 @@ router.get("/brands", async (req, res) => {
 router.get("/setRate", async (req, res) => {
     const rate = parseFloat(req.query.rate);
 
-    fs.readFile("../utils/ratesToken.txt", "utf8", (err, data) => {
+    fs.readFile(path.join(__dirname, '..', 'utils', 'ratesToken.txt'), "utf8", (err, data) => {
         if (err) {
             res.status(500).json(
                 generateResponse(true, "неизвестная ошибка: " + err + __dirname)
@@ -128,7 +128,7 @@ router.get("/setRate", async (req, res) => {
 
             const content = JSON.stringify({ rate });
 
-            fs.writeFile("../utils/rates.json", content, (err) => {
+            fs.writeFile(path.join(__dirname, '..', 'utils', 'rates.json'), content, (err) => {
                 if (err) {
                     res.status(500).json(
                         generateResponse(true, "неизвестная ошибка: " + err)
