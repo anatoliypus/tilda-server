@@ -18,10 +18,12 @@ router.get("/catalog", async (req, res) => {
     let gender = (req.query.gender && Object.values(config.genders.client).includes(req.query.gender) && req.query.gender) || config.genders.client.all
     let category = req.query.category || null
     let sort = req.query.sort
+    let brand = req.query.brand || null
+
     if (sort != 'popularity') sort = null
 
     res.status(200).json(
-        generateResponse(false, "ok", await catalogHandler(page, pageSize, gender, category, sort))
+        generateResponse(false, "ok", await catalogHandler(page, pageSize, gender, category, sort, brand))
     );
 });
 

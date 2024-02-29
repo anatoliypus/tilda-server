@@ -66,8 +66,9 @@ const updatePrices = async (items, cache = true) => {
                             prices[variantId].prices[0].tradeType != 95 &&
                             prices[variantId].prices[0].price
                         ) {
-                            priceResult[sizeText] =
-                                calculatePrice(prices[variantId].prices[0].price)
+                            priceResult[sizeText] = calculatePrice(
+                                prices[variantId].prices[0].price
+                            );
                         }
                     }
                     item.apiPrices = priceResult;
@@ -102,16 +103,16 @@ const updatePrices = async (items, cache = true) => {
 const getChildCategories = async (parentCategory) => {
     let match = {
         id: parentCategory,
-    }
+    };
     if (Array.isArray(parentCategory)) {
         match = {
-            id: {$in: parentCategory}
-        }
+            id: { $in: parentCategory },
+        };
     }
 
     const aggr = [
         {
-            $match: match
+            $match: match,
         },
         {
             $graphLookup: {
@@ -142,7 +143,7 @@ const baseGetProducts = async (
     page,
     pageSize,
     gender,
-    {category, key, sort} = {}
+    { category, key, sort, brand } = {}
 ) => {
     const collection = db.collection(config.db.collections.products);
     await collection.createIndex({ title: "text" });
@@ -180,8 +181,15 @@ const baseGetProducts = async (
         const childs = await getChildCategories(resultCategoryId);
         const ids = childs.map((v) => v.id);
         matchParameter.$and.push({
-            categoryId: {$in: ids}
-        })
+            categoryId: { $in: ids },
+        });
+    }
+
+    if (brand) {
+        const regExBrand = `^${brand.toLowerCase()}$`;
+        matchParameter.$and.push({
+            vendor: { $regex: regExBrand, $options: "i" },
+        });
     }
 
     const aggregation = [
@@ -223,7 +231,7 @@ const getBrandsList = async () => {
     const collection = db.collection(config.db.collections.brands);
     const result = await collection.find().toArray();
     return result;
-}
+};
 
 const getProductVariant = async (variantId) => {
     const collection = db.collection(config.db.collections.productVariants);
@@ -243,13 +251,15 @@ const getProductInfo = async (id) => {
     return result;
 };
 
-const getPaginatedCatalog = async (page, pageSize, gender, category, sort) => {
-    return baseGetProducts(
-        page,
-        pageSize,
-        gender,
-        {category, sort}
-    );
+const getPaginatedCatalog = async (
+    page,
+    pageSize,
+    gender,
+    category,
+    sort,
+    brand
+) => {
+    return baseGetProducts(page, pageSize, gender, { category, sort, brand });
 };
 
 const close = () => {
