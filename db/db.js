@@ -223,8 +223,8 @@ const baseGetProducts = async (
     return products[0].data;
 };
 
-const searchProducts = async (key, page, pageSize, gender) => {
-    return baseGetProducts(page, pageSize, gender, { key });
+const searchProducts = async (key, page, pageSize, gender, category, sort, brand) => {
+    return baseGetProducts(page, pageSize, gender, { key, category, sort, brand });
 };
 
 const getBrandsList = async () => {

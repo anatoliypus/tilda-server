@@ -58,13 +58,16 @@ router.get("/search", async (req, res) => {
     let page = toPositiveInt(req.query.page) || 1;
     let pageSize = toPositiveInt(req.query.pageSize) || config.defaultPageSize;
     let gender = (req.query.gender && req.query.gender in Object.values(config.genders.client) && req.query.gender) || config.genders.all
+    let category = req.query.category || null
+    let sort = req.query.sort
+    let brand = req.query.brand || null
 
     if (!key)
         return res
             .status(400)
             .json(generateResponse(true, "Please specify right search key."));
     res.status(200).json(
-        generateResponse(false, "ok", await searchHandler(key, page, pageSize, gender))
+        generateResponse(false, "ok", await searchHandler(key, page, pageSize, gender, category, sort, brand))
     );
 });
 
