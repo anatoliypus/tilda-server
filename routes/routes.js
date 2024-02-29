@@ -9,6 +9,7 @@ const {
 } = require("./handlers");
 const { config } = require("../config");
 const fs = require("node:fs");
+const path = require("node:path")
 
 const router = express.Router();
 
@@ -117,7 +118,7 @@ router.get("/setRate", async (req, res) => {
     fs.readFile("../utils/ratesToken.txt", "utf8", (err, data) => {
         if (err) {
             res.status(500).json(
-                generateResponse(true, "неизвестная ошибка: " + err)
+                generateResponse(true, "неизвестная ошибка: " + err + path.dirname())
             );
         } else {
             const token = req.query.token == data;
