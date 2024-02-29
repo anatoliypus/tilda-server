@@ -126,7 +126,7 @@ const getChildCategories = async (parentCategory) => {
         },
     ];
     const collection = db.collection(config.db.collections.products);
-    const childs = await collection.aggregate(aggregation).toArray();
+    const childs = await collection.aggregate(aggr).toArray();
     return childs[0].data;
 };
 
@@ -167,6 +167,7 @@ const baseGetProducts = async (
     if (resultCategoryId) {
         const childs = await getChildCategories(resultCategoryId);
         const ids = childs.childs.forEach((v) => v.id);
+        console.log(ids)
         matchParameter.$and.push({
             categoryId: {$in: ids}
         })
