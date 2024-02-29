@@ -9,7 +9,8 @@ const {
 } = require("./handlers");
 const { config } = require("../config");
 const fs = require("node:fs");
-const path = require("node:path")
+const path = require("node:path");
+const { clearPrices } = require("../db/db");
 
 const router = express.Router();
 
@@ -135,6 +136,7 @@ router.get("/setRate", async (req, res) => {
                     );
                 } else {
                     res.status(200).json(generateResponse(false, "ok"));
+                    clearPrices()
                 }
             });
         }

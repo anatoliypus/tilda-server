@@ -227,6 +227,13 @@ const searchProducts = async (key, page, pageSize, gender, category, sort, brand
     return baseGetProducts(page, pageSize, gender, { key, category, sort, brand });
 };
 
+const clearPrices = async () => {
+    const collection = db.collection(config.db.collections.products);
+    await collection.updateMany({}, {
+        $unset: {apiPrices: "", apiPricesUpdated: ""}
+    })
+}
+
 const getBrandsList = async () => {
     const collection = db.collection(config.db.collections.brands);
     const result = await collection.find().toArray();
@@ -274,4 +281,5 @@ module.exports = {
     updatePrices,
     getBrandsList,
     close,
+    clearPrices
 };

@@ -1,4 +1,17 @@
-const yuanRub = 13.9;
+const path = require('node:path')
+const fs = require('node:fs')
+
+let yuanRub = 13.9;
+
+try {
+    let json = fs.readFileSync(path.join(__dirname, 'rates.json'), "utf8")
+    if (json) json = JSON.parse(json)
+    if (json.rate) yuanRub = json.rate
+} catch (e) {
+    console.error(e)
+}
+
+
 const shippingRub = 1600;
 const chinaWorkPercent = 5;
 const fee = {
