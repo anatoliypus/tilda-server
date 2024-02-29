@@ -134,9 +134,7 @@ const baseGetProducts = async (
     page,
     pageSize,
     gender,
-    key = null,
-    category = null,
-    sort = null
+    {category, key, sort} = {}
 ) => {
     const collection = db.collection(config.db.collections.products);
     await collection.createIndex({ title: "text" });
@@ -206,7 +204,7 @@ const baseGetProducts = async (
 };
 
 const searchProducts = async (key, page, pageSize, gender) => {
-    return baseGetProducts(page, pageSize, gender, (key = key));
+    return baseGetProducts(page, pageSize, gender, { key });
 };
 
 const getProductVariant = async (variantId) => {
@@ -228,13 +226,11 @@ const getProductInfo = async (id) => {
 };
 
 const getPaginatedCatalog = async (page, pageSize, gender, category, sort) => {
-    console.log(category)
     return baseGetProducts(
         page,
         pageSize,
         gender,
-        (category = category),
-        (sort = sort)
+        {category, sort}
     );
 };
 
