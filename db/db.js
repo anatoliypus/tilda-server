@@ -228,6 +228,7 @@ const getProductInfo = async (id) => {
 };
 
 const getPaginatedCatalog = async (page, pageSize, gender, category, sort) => {
+    console.log(category)
     return baseGetProducts(
         page,
         pageSize,
