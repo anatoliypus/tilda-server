@@ -161,6 +161,12 @@ const baseGetProducts = async (
     if (category && category == "shoes") {
         resultCategoryId = 29;
     }
+    if (category && category == "accessories") {
+        resultCategoryId = 92;
+    }
+    if (category && category == "clothes") {
+        resultCategoryId = 2;
+    }
 
     if (resultCategoryId) {
         const childs = await getChildCategories(resultCategoryId);
