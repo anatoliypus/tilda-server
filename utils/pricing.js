@@ -16,10 +16,10 @@ const calculatePrice = (priceYuan) => {
     priceYuan = priceYuan / 100
     if (priceYuan < 2000) {
         // до 2000 юаней не включительно
-        const yuanRub = under2000Info.rate
-        const chinaWorkPercent = under2000Info.chinaWork
-        const shippingRub = under2000Info.shipping
-        const fee = under2000Info.fee
+        const yuanRub = priceInfo.under2000Info.rate
+        const chinaWorkPercent = priceInfo.under2000Info.chinaWork
+        const shippingRub = priceInfo.under2000Info.shipping
+        const fee = priceInfo.under2000Info.fee
         return Math.ceil(
             priceYuan * yuanRub +
             priceYuan * yuanRub * chinaWorkPercent +
@@ -28,10 +28,10 @@ const calculatePrice = (priceYuan) => {
         );
     } else if (priceYuan >= 2000 && priceYuan < 3000) {
         // 2000 - 2999 юаней
-        const yuanRub = more2000Less3000Info.rate
-        const chinaWorkPercent = more2000Less3000Info.chinaWork
-        const shippingRub = more2000Less3000Info.shipping
-        const fee = more2000Less3000Info.fee
+        const yuanRub = priceInfo.more2000Less3000Info.rate
+        const chinaWorkPercent = priceInfo.more2000Less3000Info.chinaWork
+        const shippingRub = priceInfo.more2000Less3000Info.shipping
+        const fee = priceInfo.more2000Less3000Info.fee
         return Math.ceil(
             priceYuan * yuanRub +
             priceYuan * yuanRub * chinaWorkPercent +
@@ -40,10 +40,10 @@ const calculatePrice = (priceYuan) => {
         );
     } else if (priceYuan >= 3000 && priceYuan < 10000) {
         // 3000 - 9999 юаней
-        const yuanRub = more3000Info.rate
-        const chinaWorkPercent = more3000Info.chinaWork
-        const shippingRub = more3000Info.shipping
-        const fee = more3000Info.fee
+        const yuanRub = priceInfo.more3000Info.rate
+        const chinaWorkPercent = priceInfo.more3000Info.chinaWork
+        const shippingRub = priceInfo.more3000Info.shipping
+        const fee = priceInfo.more3000Info.fee
 
         const withoutComissionAndShipping =
             priceYuan * yuanRub + priceYuan * yuanRub * chinaWorkPercent;
@@ -54,10 +54,10 @@ const calculatePrice = (priceYuan) => {
         );
     } else {
         // больше 10 000 юаней
-        const yuanRub = more10000Info.rate
-        const chinaWorkPercent = more10000Info.chinaWork
-        const shippingRub = more10000Info.shipping
-        const fee = more10000Info.fee
+        const yuanRub = priceInfo.more10000Info.rate
+        const chinaWorkPercent = priceInfo.more10000Info.chinaWork
+        const shippingRub = priceInfo.more10000Info.shipping
+        const fee = priceInfo.more10000Info.fee
 
         const withoutComissionAndShipping =
             priceYuan * yuanRub + priceYuan * yuanRub * chinaWorkPercent;
