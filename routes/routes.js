@@ -162,6 +162,10 @@ router.get("/demoPrices", async (req, res) => {
     res.sendFile(config.server.demoHTML);
 });
 
+router.get("/setRates", async (req, res) => {
+    res.sendFile(config.rates.file);
+});
+
 router.all("*", function (req, res) {
     res.status(404).json(generateResponse(true, "Unknown route"));
 });
