@@ -1,4 +1,7 @@
 const express = require("express");
+const multer = require('multer')
+const upload = multer({ dest: './uploads/' })
+const xlsx = require('node-xlsx')
 const { toPositiveInt } = require("../utils/utils");
 const {
     catalogHandler,
@@ -113,34 +116,38 @@ router.get("/brands", async (req, res) => {
     res.status(200).json(generateResponse(false, "ok", await brandsHandler()));
 });
 
-router.get("/setRate", async (req, res) => {
-    const rate = parseFloat(req.query.rate);
+router.post("/setRates", upload.single('file'), async (req, res) => {
+    if (req.body.login != config.rates.login || req.body.password != config.rates.password) res.status(403).json(generateResponse(true, "неправильный логин и/или пароль"));
+    if (!req.file || !req.file.path) res.status(500).json(generateResponse(true, "неизвестная ошибка"));
+    const sheet = xlsx.parse(req.file.path)[0].data
+    const under2000 = sheet[3]
+    const more2000Less3000 = sheet[4]
+    const more3000 = sheet[5]
+    const more10000 = sheet[6]
+    if (!under2000.length || !more2000Less3000.length || !more3000.length || !more10000.length) res.status(400).json(generateResponse(true, "неправильный формат файла"));
 
-    fs.readFile(path.join(__dirname, '..', 'utils', 'ratesToken.txt'), "utf8", (err, data) => {
-        if (err) {
-            res.status(500).json(
-                generateResponse(true, "неизвестная ошибка: " + err)
-            );
-        } else {
-            const token = req.query.token == data.trim();
-
-            if (!token)
-                res.status(403).json(generateResponse(true, "неверный токен"));
-
-            const content = JSON.stringify({ rate });
-
-            fs.writeFile(path.join(__dirname, '..', 'utils', 'rates.json'), content, (err) => {
-                if (err) {
-                    res.status(500).json(
-                        generateResponse(true, "неизвестная ошибка: " + err)
-                    );
-                } else {
-                    res.status(200).json(generateResponse(false, "ok"));
-                    clearPrices()
-                }
-            });
+    try {
+        const parseRow = (row) => {
+            return {
+                rate: parseFloat(row[3]),
+                chinaWork: parseFloat(row[4]),
+                shipping: parseFloat(row[5]),
+                fee: parseFloat(row[6]),
+            }
         }
-    });
+        const under2000Info = parseRow(under2000)
+        const more2000Less3000Info = parseRow(more2000Less3000)
+        const more3000Info = parseRow(more3000)
+        const more10000Info = parseRow(more10000)
+    
+        const result = {under2000Info, more2000Less3000Info, more3000Info, more10000Info}
+        const json = JSON.stringify(result)
+        fs.writeFileSync(path.join(__dirname, '..', 'utils', 'rates.json'), json)
+        await clearPrices()
+        res.status(200).json(generateResponse(false, "ok"));
+    } catch(e) {
+        res.status(400).json(generateResponse(true, "ошибка чтения файла"));
+    }
 });
 
 router.get("/js", async (req, res) => {

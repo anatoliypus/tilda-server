@@ -1,62 +1,70 @@
 const path = require('node:path')
 const fs = require('node:fs')
 
-let yuanRub = 13.9;
+let priceInfo;
 
 try {
     let json = fs.readFileSync(path.join(__dirname, 'rates.json'), "utf8")
     if (json) json = JSON.parse(json)
-    if (json.rate) yuanRub = json.rate
+    priceInfo = json
 } catch (e) {
     console.error(e)
 }
-
-
-const shippingRub = 1600;
-const chinaWorkPercent = 5;
-const fee = {
-    under2000: 1500,
-    more2000: 2000,
-    more3000Percent: 10,
-    more10000Percent: 13,
-};
 
 const calculatePrice = (priceYuan) => {
     // цены приходят с двумя нолями сзади
     priceYuan = priceYuan / 100
     if (priceYuan < 2000) {
         // до 2000 юаней не включительно
+        const yuanRub = under2000Info.rate
+        const chinaWorkPercent = under2000Info.chinaWork
+        const shippingRub = under2000Info.shipping
+        const fee = under2000Info.fee
         return Math.ceil(
             priceYuan * yuanRub +
-            ((priceYuan * yuanRub) / 100) * chinaWorkPercent +
+            priceYuan * yuanRub * chinaWorkPercent +
             shippingRub +
-            fee.under2000
+            fee
         );
     } else if (priceYuan >= 2000 && priceYuan < 3000) {
         // 2000 - 2999 юаней
+        const yuanRub = more2000Less3000Info.rate
+        const chinaWorkPercent = more2000Less3000Info.chinaWork
+        const shippingRub = more2000Less3000Info.shipping
+        const fee = more2000Less3000Info.fee
         return Math.ceil(
             priceYuan * yuanRub +
-            ((priceYuan * yuanRub) / 100) * chinaWorkPercent +
+            priceYuan * yuanRub * chinaWorkPercent +
             shippingRub +
-            fee.more2000
+            fee
         );
     } else if (priceYuan >= 3000 && priceYuan < 10000) {
         // 3000 - 9999 юаней
+        const yuanRub = more3000Info.rate
+        const chinaWorkPercent = more3000Info.chinaWork
+        const shippingRub = more3000Info.shipping
+        const fee = more3000Info.fee
+
         const withoutComissionAndShipping =
-            priceYuan * yuanRub + ((priceYuan * yuanRub) / 100) * chinaWorkPercent;
+            priceYuan * yuanRub + priceYuan * yuanRub * chinaWorkPercent;
         return Math.ceil(
             withoutComissionAndShipping +
             shippingRub +
-            (withoutComissionAndShipping / 100) * fee.more3000Percent
+            withoutComissionAndShipping * fee
         );
     } else {
         // больше 10 000 юаней
+        const yuanRub = more10000Info.rate
+        const chinaWorkPercent = more10000Info.chinaWork
+        const shippingRub = more10000Info.shipping
+        const fee = more10000Info.fee
+
         const withoutComissionAndShipping =
-            priceYuan * yuanRub + ((priceYuan * yuanRub) / 100) * chinaWorkPercent;
+            priceYuan * yuanRub + priceYuan * yuanRub * chinaWorkPercent;
         return Math.ceil(
             withoutComissionAndShipping +
             shippingRub +
-            (withoutComissionAndShipping / 100) * fee.more10000Percent
+            withoutComissionAndShipping * fee
         );
     }
 };
