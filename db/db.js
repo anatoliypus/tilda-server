@@ -100,7 +100,19 @@ const updatePrices = async (items, cache = true) => {
     return result;
 };
 
-const getChildCategories = async (parentCategory) => {
+const getCategoryLevel = async (parentCategory=null) => {
+    const collection = db.collection(config.db.collections.categories);
+    if (!parentCategory) {
+        const result = await collection.find({ "parentId" : { "$exists" : false } }).toArray();
+        return result
+    } else {
+        const result = await getChildCategories(parentCategory, 1)
+        return result
+    }
+    
+}
+
+const getChildCategories = async (parentCategory, maxDepth=20) => {
     let match = {
         id: parentCategory,
     };
@@ -121,11 +133,12 @@ const getChildCategories = async (parentCategory) => {
                 connectFromField: "id",
                 connectToField: "parentId",
                 as: "childs",
-                maxDepth: 20,
+                maxDepth
             },
         },
         {
             $project: {
+                id: 1,
                 name: 1,
                 childs: {
                     id: 1,
@@ -166,19 +179,8 @@ const baseGetProducts = async (
 
     if (key) matchParameter.$and.push({ $text: { $search: key } });
 
-    let resultCategoryId = null;
-    if (category && category == "shoes") {
-        resultCategoryId = 29;
-    }
-    if (category && category == "accessories") {
-        resultCategoryId = 92;
-    }
-    if (category && category == "clothes") {
-        resultCategoryId = [2, 1000095];
-    }
-
-    if (resultCategoryId) {
-        const childs = await getChildCategories(resultCategoryId);
+    if (category) {
+        const childs = await getChildCategories(category);
         const ids = childs.map((v) => v.id);
         matchParameter.$and.push({
             categoryId: { $in: ids },
@@ -281,5 +283,6 @@ module.exports = {
     updatePrices,
     getBrandsList,
     close,
-    clearPrices
+    clearPrices,
+    getCategoryLevel
 };
