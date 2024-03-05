@@ -255,7 +255,7 @@ const baseGetProducts = async (
         },
     ];
 
-    console.log(aggregation)
+    console.log(JSON.stringify(aggregation, null, 2))
 
     let products = await collection.aggregate(aggregation).toArray();
     if (category) console.log(products[0].data.length)
