@@ -87,7 +87,7 @@ router.get("/search", async (req, res) => {
             req.query.gender in Object.values(config.genders.client) &&
             req.query.gender) ||
         config.genders.all;
-    let category = req.query.category || null;
+    let category = toPositiveInt(req.query.category) || null;
     let sort = req.query.sort;
     let brand = req.query.brand || null;
 
