@@ -208,13 +208,24 @@ const baseGetProducts = async (
         const childs = await getChildCategories(category);
         const ids = childs.map((v) => v.id);
         ids.push(category)
-        matchParameter.$and.push({
-            categoryId: { $in: ids },
-        });
         console.log(category)
-        console.log({
-            categoryId: { $in: ids },
-        })
+        
+        if (ids.length == 1) {
+            matchParameter.$and.push({
+                categoryId: { $eq: ids[0] },
+            });
+            console.log({
+                categoryId: { $eq: ids[0] },
+            })
+        } else {
+            matchParameter.$and.push({
+                categoryId: { $in: ids },
+            });
+            console.log({
+                categoryId: { $in: ids },
+            })
+        }
+        
     }
 
     if (brand) {
