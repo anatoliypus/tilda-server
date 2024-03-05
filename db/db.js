@@ -100,16 +100,43 @@ const updatePrices = async (items, cache = true) => {
     return result;
 };
 
+const checkIfCategoryHasItems = async (categoryId) => {
+    const collection = db.collection(config.db.collections.products);
+    const query = {
+        categoryId: { $eq: categoryId },
+    };
+    const result = await collection.findOne(query);
+    return Boolean(result)
+}
+
 const getCategoryLevel = async (parentCategory=null) => {
     const collection = db.collection(config.db.collections.categories);
+    let result
     if (!parentCategory) {
-        const result = await collection.find({ "parentId" : { "$exists" : false } }).toArray();
-        return result
+        result = await collection.find({ "parentId" : { "$exists" : false } }).toArray();
+        
     } else {
-        const result = await getChildCategories(parentCategory, 1)
-        return result
+        result = await getChildCategories(parentCategory, 1)
     }
     
+    const filteredResult = []
+    for (let r of result) {
+        const categoryItSelf = await checkIfCategoryHasItems(r.id)
+        if (categoryItSelf) {
+            filteredResult.push(r)
+            continue
+        }
+        const childs = await getChildCategories(r.id)
+        for (let ch of childs) {
+            const childHasItems = await checkIfCategoryHasItems(ch.id)
+            if (childHasItems) {
+                filteredResult.push(r)
+                break
+            }
+        }
+    }
+
+    return filteredResult
 }
 
 const getChildCategories = async (parentCategory, maxDepth=20) => {
