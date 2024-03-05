@@ -126,14 +126,14 @@ const getCategoryLevel = async (parentCategory=null) => {
             filteredResult.push(r)
             continue
         }
-        const childs = await getChildCategories(r.id, 1)
-        for (let ch of childs) {
-            const childHasItems = await checkIfCategoryHasItems(ch.id)
-            if (childHasItems) {
-                filteredResult.push(r)
-                break
-            }
-        }
+        // const childs = await getChildCategories(r.id, 1)
+        // for (let ch of childs) {
+        //     const childHasItems = await checkIfCategoryHasItems(ch.id)
+        //     if (childHasItems) {
+        //         filteredResult.push(r)
+        //         break
+        //     }
+        // }
     }
 
     return filteredResult
