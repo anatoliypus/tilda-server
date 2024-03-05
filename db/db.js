@@ -112,7 +112,7 @@ const checkIfCategoryHasItems = async (categoryId) => {
 const getCategoryLevel = async (parentCategory=null) => {
     const collection = db.collection(config.db.collections.categories);
     if (!parentCategory) {
-        const result = await collection.find({ "parentId" : { "$exists" : false } }).toArray();
+        const result = await collection.find({ "parentId" : { "$exists" : false }, "unused": { "$exists" : false }}).toArray();
         return result
     } else {
         const result = await getChildCategories(parentCategory, 1)
