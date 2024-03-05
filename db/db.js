@@ -133,9 +133,6 @@ const getCategoryLevel = async (parentCategory=null) => {
             // }
         }
 
-        console.log(result.length)
-        console.log(filteredResult.length)
-
         return filteredResult
     }
 }
