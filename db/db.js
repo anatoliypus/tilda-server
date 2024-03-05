@@ -196,6 +196,11 @@ const baseGetProducts = async (
     } else {
         genderParameter.$or.push({ gender: { $eq: config.genders.db.man } });
         genderParameter.$or.push({ gender: { $eq: config.genders.db.woman } });
+
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.baby } });
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.child } });
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.eldestChild } });
+        genderParameter.$or.push({ gender: { $eq: config.genders.db.middleChild } });
     }
 
     let matchParameter = {
