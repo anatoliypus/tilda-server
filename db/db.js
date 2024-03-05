@@ -252,7 +252,7 @@ const baseGetProducts = async (
     ];
 
     let products = await collection.aggregate(aggregation).toArray();
-    if (category) console.log(products[0].data)
+    if (category) console.log(products[0].data.length)
     return products[0].data;
 };
 
