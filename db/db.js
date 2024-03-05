@@ -211,6 +211,10 @@ const baseGetProducts = async (
         matchParameter.$and.push({
             categoryId: { $in: ids },
         });
+        console.log(category)
+        console.log({
+            categoryId: { $in: ids },
+        })
     }
 
     if (brand) {
@@ -248,6 +252,7 @@ const baseGetProducts = async (
     ];
 
     let products = await collection.aggregate(aggregation).toArray();
+    if (category) console.log(products[0].data)
     return products[0].data;
 };
 
