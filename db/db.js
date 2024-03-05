@@ -106,38 +106,41 @@ const checkIfCategoryHasItems = async (categoryId) => {
         categoryId: { $eq: categoryId },
     };
     const result = await collection.findOne(query);
-    return Boolean(result)
-}
+    return Boolean(result);
+};
 
-const getCategoryLevel = async (parentCategory=null) => {
+const getCategoryLevel = async (parentCategory = null) => {
     const collection = db.collection(config.db.collections.categories);
+    let result;
     if (!parentCategory) {
-        const result = await collection.find({ "parentId" : { "$exists" : false } }).toArray();
-        return result
+        result = await collection
+            .find({ parentId: { $exists: false } })
+            .toArray();
     } else {
-        const result = await getChildCategories(parentCategory, 1)
-        const filteredResult = []
-        for (let r of result) {
-            const categoryItSelf = await checkIfCategoryHasItems(r.id)
-            if (categoryItSelf) {
-                filteredResult.push(r)
-                continue
-            }
-            const childs = await getChildCategories(r.id, 1)
-            for (let ch of childs) {
-                const childHasItems = await checkIfCategoryHasItems(ch.id)
-                if (childHasItems) {
-                    filteredResult.push(r)
-                    break
-                }
+        result = await getChildCategories(parentCategory, 1);
+    }
+
+    const filteredResult = [];
+    for (let r of result) {
+        const categoryItSelf = await checkIfCategoryHasItems(r.id);
+        if (categoryItSelf) {
+            filteredResult.push(r);
+            continue;
+        }
+        const childs = await getChildCategories(r.id, 1);
+        for (let ch of childs) {
+            const childHasItems = await checkIfCategoryHasItems(ch.id);
+            if (childHasItems) {
+                filteredResult.push(r);
+                break;
             }
         }
-
-        return filteredResult
     }
-}
 
-const getChildCategories = async (parentCategory, maxDepth=20) => {
+    return filteredResult;
+};
+
+const getChildCategories = async (parentCategory, maxDepth = 20) => {
     let match = {
         id: parentCategory,
     };
@@ -158,7 +161,7 @@ const getChildCategories = async (parentCategory, maxDepth=20) => {
                 connectFromField: "id",
                 connectToField: "parentId",
                 as: "childs",
-                maxDepth
+                maxDepth,
             },
         },
         {
@@ -199,8 +202,12 @@ const baseGetProducts = async (
 
         genderParameter.$or.push({ gender: { $eq: config.genders.db.baby } });
         genderParameter.$or.push({ gender: { $eq: config.genders.db.child } });
-        genderParameter.$or.push({ gender: { $eq: config.genders.db.eldestChild } });
-        genderParameter.$or.push({ gender: { $eq: config.genders.db.middleChild } });
+        genderParameter.$or.push({
+            gender: { $eq: config.genders.db.eldestChild },
+        });
+        genderParameter.$or.push({
+            gender: { $eq: config.genders.db.middleChild },
+        });
     }
 
     let matchParameter = {
@@ -212,8 +219,8 @@ const baseGetProducts = async (
     if (category) {
         const childs = await getChildCategories(category);
         const ids = childs.map((v) => v.id);
-        ids.push(category)
-        
+        ids.push(category);
+
         if (ids.length == 1) {
             matchParameter.$and.push({
                 categoryId: { $eq: ids[0] },
@@ -223,7 +230,6 @@ const baseGetProducts = async (
                 categoryId: { $in: ids },
             });
         }
-        
     }
 
     if (brand) {
@@ -260,23 +266,39 @@ const baseGetProducts = async (
         },
     ];
 
-    console.log(JSON.stringify(aggregation, null, 2))
+    console.log(JSON.stringify(aggregation, null, 2));
 
     let products = await collection.aggregate(aggregation).toArray();
-    if (category) console.log(products[0].data.length)
+    if (category) console.log(products[0].data.length);
     return products[0].data;
 };
 
-const searchProducts = async (key, page, pageSize, gender, category, sort, brand) => {
-    return baseGetProducts(page, pageSize, gender, { key, category, sort, brand });
+const searchProducts = async (
+    key,
+    page,
+    pageSize,
+    gender,
+    category,
+    sort,
+    brand
+) => {
+    return baseGetProducts(page, pageSize, gender, {
+        key,
+        category,
+        sort,
+        brand,
+    });
 };
 
 const clearPrices = async () => {
     const collection = db.collection(config.db.collections.products);
-    await collection.updateMany({}, {
-        $unset: {apiPrices: "", apiPricesUpdated: ""}
-    })
-}
+    await collection.updateMany(
+        {},
+        {
+            $unset: { apiPrices: "", apiPricesUpdated: "" },
+        }
+    );
+};
 
 const getBrandsList = async () => {
     const collection = db.collection(config.db.collections.brands);
@@ -326,5 +348,5 @@ module.exports = {
     getBrandsList,
     close,
     clearPrices,
-    getCategoryLevel
+    getCategoryLevel,
 };
