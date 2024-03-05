@@ -5,7 +5,7 @@ const { searchProducts, getProductInfo, getPaginatedCatalog, updatePrices, getBr
 const catalogHandler = async (page, pageSize, gender, category, sort, brand) => {
     let products = await getPaginatedCatalog(page, pageSize, gender, category, sort, brand)
     let categories = await getCategoryLevel(category)
-    products = await updatePrices(products)
+    // products = await updatePrices(products)
     return {
         products,
         categories
