@@ -111,32 +111,30 @@ const checkIfCategoryHasItems = async (categoryId) => {
 
 const getCategoryLevel = async (parentCategory=null) => {
     const collection = db.collection(config.db.collections.categories);
-    let result
     if (!parentCategory) {
-        result = await collection.find({ "parentId" : { "$exists" : false } }).toArray();
-        
+        const result = await collection.find({ "parentId" : { "$exists" : false } }).toArray();
+        return result
     } else {
-        result = await getChildCategories(parentCategory, 1)
-    }
-    
-    const filteredResult = []
-    for (let r of result) {
-        const categoryItSelf = await checkIfCategoryHasItems(r.id)
-        if (categoryItSelf) {
-            filteredResult.push(r)
-            continue
+        const result = await getChildCategories(parentCategory, 1)
+        const filteredResult = []
+        for (let r of result) {
+            const categoryItSelf = await checkIfCategoryHasItems(r.id)
+            if (categoryItSelf) {
+                filteredResult.push(r)
+                continue
+            }
+            // const childs = await getChildCategories(r.id, 1)
+            // for (let ch of childs) {
+            //     const childHasItems = await checkIfCategoryHasItems(ch.id)
+            //     if (childHasItems) {
+            //         filteredResult.push(r)
+            //         break
+            //     }
+            // }
         }
-        // const childs = await getChildCategories(r.id, 1)
-        // for (let ch of childs) {
-        //     const childHasItems = await checkIfCategoryHasItems(ch.id)
-        //     if (childHasItems) {
-        //         filteredResult.push(r)
-        //         break
-        //     }
-        // }
-    }
 
-    return filteredResult
+        return filteredResult
+    }
 }
 
 const getChildCategories = async (parentCategory, maxDepth=20) => {
