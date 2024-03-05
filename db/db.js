@@ -208,22 +208,15 @@ const baseGetProducts = async (
         const childs = await getChildCategories(category);
         const ids = childs.map((v) => v.id);
         ids.push(category)
-        console.log(category)
         
         if (ids.length == 1) {
             matchParameter.$and.push({
                 categoryId: { $eq: ids[0] },
             });
-            console.log({
-                categoryId: { $eq: ids[0] },
-            })
         } else {
             matchParameter.$and.push({
                 categoryId: { $in: ids },
             });
-            console.log({
-                categoryId: { $in: ids },
-            })
         }
         
     }
@@ -261,6 +254,8 @@ const baseGetProducts = async (
             },
         },
     ];
+
+    console.log(aggregation)
 
     let products = await collection.aggregate(aggregation).toArray();
     if (category) console.log(products[0].data.length)
