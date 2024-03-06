@@ -255,7 +255,7 @@ const baseGetProducts = async (
                             apiPrices: 1,
                             apiPricesUpdated: 1,
                             variantIdSizeMapping: 1,
-                            params: 1
+                            properties: 1
                         },
                     },
                 ],
