@@ -287,7 +287,7 @@ const getHints = async (key) => {
     let categoryResult = await categoryCollection.find({name: {$regex: key, $options: 'i'}}).toArray();
     categoryResult = categoryResult.map((v) => {
         return {...v, type: 'category'}
-    })
+    }).filter((v) => checkIfCategoryHasItems(v.id))
     return categoryResult;
 };
 
