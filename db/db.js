@@ -284,6 +284,7 @@ const getBrandsList = async () => {
 
 const getHints = async (key) => {
     const collection = db.collection(config.db.collections.categories);
+    console.log(key)
     const result = await collection.find({$text: {$search: key}}).toArray();
     return result;
 };
