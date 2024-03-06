@@ -284,8 +284,8 @@ const getBrandsList = async () => {
 
 const getHints = async (key) => {
     const collection = db.collection(config.db.collections.categories);
-    // const result = await collection.find().toArray();
-    return [{type: 'category', value: 'Кепки'}];
+    const result = await collection.find({$text: {$search: key}}).toArray();
+    return result;
 };
 
 const getProductVariant = async (variantId) => {
