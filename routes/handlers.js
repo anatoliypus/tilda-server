@@ -28,7 +28,7 @@ const catalogHandler = async (
     const result = {
         products, categories: []
     }
-    if (page > 1) {
+    if (page < 2) {
         let categories = await getCategoryLevel(category);
         result.categories = categories
     }
