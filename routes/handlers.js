@@ -15,7 +15,8 @@ const catalogHandler = async (
     gender,
     category,
     sort,
-    brand
+    brand,
+    loadCategories
 ) => {
     let products = await getPaginatedCatalog(
         page,
@@ -28,7 +29,7 @@ const catalogHandler = async (
     const result = {
         products, categories: []
     }
-    if (page < 2) {
+    if (loadCategories && page < 2) {
         let categories = await getCategoryLevel(category);
         result.categories = categories
     }
