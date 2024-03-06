@@ -9,6 +9,7 @@ const {
     searchHandler,
     searchPoizonHandler,
     brandsHandler,
+    hintsHandler
 } = require("./handlers");
 const { config } = require("../config");
 const fs = require("node:fs");
@@ -112,6 +113,12 @@ router.get("/search", async (req, res) => {
         )
     );
 });
+
+router.get("/hints", async (req, res) => {
+    const key = req.query.key || null
+    if (!key) res.status(403).json(generateResponse(true, "не задан ключ для поиска"));
+    res.status(200).json(generateResponse(false, "ok", await hintsHandler(key)));
+})
 
 router.get("/calculatePrice", async (req, res) => {
     const price = toPositiveInt(req.query.price) || null

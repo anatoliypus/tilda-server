@@ -1,44 +1,93 @@
-const { searchProductsPoizon } = require('../apiService/apiService')
-const { searchProducts, getProductInfo, getPaginatedCatalog, updatePrices, getBrandsList, getCategoryLevel } = require('../db/db')
+const { searchProductsPoizon } = require("../apiService/apiService");
+const {
+    searchProducts,
+    getProductInfo,
+    getPaginatedCatalog,
+    updatePrices,
+    getBrandsList,
+    getCategoryLevel,
+    getHints,
+} = require("../db/db");
 
-
-const catalogHandler = async (page, pageSize, gender, category, sort, brand) => {
-    let products = await getPaginatedCatalog(page, pageSize, gender, category, sort, brand)
-    let categories = await getCategoryLevel(category)
+const catalogHandler = async (
+    page,
+    pageSize,
+    gender,
+    category,
+    sort,
+    brand
+) => {
+    let products = await getPaginatedCatalog(
+        page,
+        pageSize,
+        gender,
+        category,
+        sort,
+        brand
+    );
+    let categories = await getCategoryLevel(category);
     // products = await updatePrices(products)
     return {
         products,
-        categories
-    }
-}
+        categories,
+    };
+};
 
-const searchHandler = async (key, page, pageSize, gender, category, sort, brand) => {
-    let products = await searchProducts(key, page, pageSize, gender, category, sort, brand)
+const searchHandler = async (
+    key,
+    page,
+    pageSize,
+    gender,
+    category,
+    sort,
+    brand
+) => {
+    let products = await searchProducts(
+        key,
+        page,
+        pageSize,
+        gender,
+        category,
+        sort,
+        brand
+    );
     // products = await updatePrices(products)
     return {
-        products
-    }
-}
+        products,
+    };
+};
 
 const brandsHandler = async () => {
-    let brands = await getBrandsList()
+    let brands = await getBrandsList();
     return {
-        brands
-    }
-}
+        brands,
+    };
+};
 
 const searchPoizonHandler = async (key, page, pageSize) => {
-    let products = await searchProductsPoizon(key, page, pageSize)
+    let products = await searchProductsPoizon(key, page, pageSize);
     return {
-        products: products.data
-    }
-}
+        products: products.data,
+    };
+};
 
 const itemHandler = async (id, cache) => {
     let product = await getProductInfo(id);
-    product = await updatePrices([product], cache)
-    product = product[0]
-    return product
-}
+    product = await updatePrices([product], cache);
+    product = product[0];
+    return product;
+};
 
-module.exports = {catalogHandler, searchHandler, itemHandler, searchPoizonHandler, brandsHandler}
+const hintsHandler = async (key) => {
+    const hints = await getHints(key);
+    return hints;
+};
+
+module.exports = {
+    catalogHandler,
+    searchHandler,
+    itemHandler,
+    searchPoizonHandler,
+    brandsHandler,
+    hintsHandler,
+};
