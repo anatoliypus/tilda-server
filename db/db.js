@@ -284,7 +284,7 @@ const getBrandsList = async () => {
 
 const getHints = async (key) => {
     const categoryCollection = db.collection(config.db.collections.categories);
-    let categoryResult = await categoryCollection.find({A: {$regex: key, $options: "$i"}}).toArray();
+    let categoryResult = await categoryCollection.find({name: {$regex: key, $options: "$i"}}).toArray();
     categoryResult = categoryResult.map((v) => {
         return {...v, type: 'category'}
     })
