@@ -284,7 +284,8 @@ const getBrandsList = async () => {
 
 const getHints = async (key) => {
     const categoryCollection = db.collection(config.db.collections.categories);
-    let categoryResult = await categoryCollection.find({$text: {$search: `"${key}"`}}).toArray();
+    const sort = { score: { $meta: "textScore" } };
+    let categoryResult = await categoryCollection.find({$text: {$search: `"${key}"`}}).sort(sort).toArray();
     categoryResult = categoryResult.map((v) => {
         return {...v, type: 'category'}
     })
