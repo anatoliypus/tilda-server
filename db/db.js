@@ -261,6 +261,8 @@ const baseGetProducts = async (
         },
     ];
 
+    console.log(aggregation)
+
     let products = await collection.aggregate(aggregation).toArray();
     return products[0].data;
 };
