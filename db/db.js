@@ -283,10 +283,12 @@ const getBrandsList = async () => {
 };
 
 const getHints = async (key) => {
-    const collection = db.collection(config.db.collections.categories);
-    console.log(key)
-    const result = await collection.find({$text: {$search: key}}).toArray();
-    return result;
+    const categoryCollection = db.collection(config.db.collections.categories);
+    let categoryResult = await categoryCollection.find({$text: {$search: key}}).toArray();
+    categoryResult = categoryResult.map((v) => {
+        return {...v, type: 'category'}
+    })
+    return categoryResult;
 };
 
 const getProductVariant = async (variantId) => {
