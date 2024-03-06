@@ -36,7 +36,7 @@ router.get("/catalog", async (req, res) => {
     let category = toPositiveInt(req.query.category) || null;
     let sort = req.query.sort;
     let brand = req.query.brand || null;
-    let loadCategories = toPositiveInt(req.query.loadCategories) || true
+    let loadCategories = toPositiveInt(req.query.loadCategories)
     if (loadCategories != 0 && loadCategories != 1) loadCategories = true
     loadCategories = Boolean(loadCategories)
 
