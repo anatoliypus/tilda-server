@@ -287,13 +287,13 @@ const getHints = async (key) => {
     let categoryResult = await categoryCollection.find({name: {$regex: key, $options: 'i'}}).toArray();
     categoryResult = categoryResult.map((v) => {
         return {...v, type: 'category'}
-    }).filter(async (v) => {
-        const result = await checkIfCategoryHasItems(v.id)
-        console.log(v.id, result)
-        return result
     })
-    console.log(categoryResult)
-    return categoryResult;
+    const filteredCategoryResult = []
+    for (const cat of categoryResult) {
+        const result = await checkIfCategoryHasItems(cat.id)
+        if (result) filteredCategoryResult.push(cat)
+    }
+    return filteredCategoryResult;
 };
 
 const getProductVariant = async (variantId) => {
