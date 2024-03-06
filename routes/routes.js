@@ -116,7 +116,6 @@ router.get("/search", async (req, res) => {
 router.get("/calculatePrice", async (req, res) => {
     const price = toPositiveInt(req.query.price) || null
     if (!price) res.status(403).json(generateResponse(true, "не задана цена"));
-    console.log(price)
     res.status(200).json(generateResponse(false, "ok", {
         price: calculatePrice(price)
     }));

@@ -174,8 +174,6 @@ const getChildCategories = async (parentCategory, maxDepth=20) => {
     ];
     const collection = db.collection(config.db.collections.categories);
     const childs = await collection.aggregate(aggr).toArray();
-    console.log(parentCategory)
-    console.log(childs)
     return childs[0].childs;
 };
 
@@ -263,10 +261,7 @@ const baseGetProducts = async (
         },
     ];
 
-    console.log(JSON.stringify(aggregation, null, 2))
-
     let products = await collection.aggregate(aggregation).toArray();
-    if (category) console.log(products[0].data.length)
     return products[0].data;
 };
 
