@@ -292,6 +292,7 @@ const getHints = async (key) => {
         console.log(v.id, result)
         return result
     })
+    console.log(categoryResult)
     return categoryResult;
 };
 
