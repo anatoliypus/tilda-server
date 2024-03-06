@@ -14,6 +14,7 @@ const { config } = require("../config");
 const fs = require("node:fs");
 const path = require("node:path");
 const { clearPrices } = require("../db/db");
+const { calculatePrice } = require("../utils/pricing");
 
 const router = express.Router();
 
@@ -111,6 +112,14 @@ router.get("/search", async (req, res) => {
         )
     );
 });
+
+router.get("/calculatePrice", async (req, res) => {
+    const price = toPositiveInt(req.query.price) || null
+    if (!price) res.status(403).json(generateResponse(true, "не задана цена"));
+    res.status(200).json(generateResponse(false, "ok", {
+        price: calculatePrice(price)
+    }));
+})
 
 router.get("/brands", async (req, res) => {
     res.status(200).json(generateResponse(false, "ok", await brandsHandler()));
