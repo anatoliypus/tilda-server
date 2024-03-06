@@ -25,12 +25,15 @@ const catalogHandler = async (
         sort,
         brand
     );
-    let categories = await getCategoryLevel(category);
+    const result = {
+        products, categories: []
+    }
+    if (pageSize > 1) {
+        let categories = await getCategoryLevel(category);
+        result.categories = categories
+    }
     // products = await updatePrices(products)
-    return {
-        products,
-        categories,
-    };
+    return result
 };
 
 const searchHandler = async (
