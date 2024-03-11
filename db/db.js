@@ -207,7 +207,10 @@ const baseGetProducts = async (
         $and: [genderParameter],
     };
 
-    if (key) matchParameter.$and.push({ $text: { $search: key } });
+    if (key) {
+        const regEx = `^${key.toLowerCase()}$`;
+        matchParameter.$and.push({ title: { $regex: regEx, $options: "i" } });
+    }
 
     if (category) {
         const childs = await getChildCategories(category);
