@@ -208,7 +208,7 @@ const baseGetProducts = async (
     };
 
     if (key) {
-        const regEx = `^${key.toLowerCase()}$`;
+        const regEx = `${key.toLowerCase()}`;
         matchParameter.$and.push({ title: { $regex: regEx, $options: "i" } });
     }
 
