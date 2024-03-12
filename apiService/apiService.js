@@ -9,6 +9,7 @@ const limiter = new Bottleneck({
   });
 
 const getProductDetail = async (spuId) => {
+    await incrementProductInfoAnalytics()
     var options = {
         method: "GET",
         url: `https://poison-api.com/Dewu/productDetail?spuId=${spuId}`,
@@ -18,11 +19,11 @@ const getProductDetail = async (spuId) => {
     };
     const response = await limiter.schedule(() => request(options))
     const json = JSON.parse(response)
-    await incrementProductInfoAnalytics()
     return json
 }
 
 const searchProductsPoizon = async (key, page, pageSize) => {
+    await incrementSearchAnalytics()
     var options = {
         method: "GET",
         url: `https://poison-api.com/Dewu/search?keyword=${key}&limit=${pageSize}&page=${page}`,
@@ -32,11 +33,11 @@ const searchProductsPoizon = async (key, page, pageSize) => {
     };
     const response = await limiter.schedule(() => request(options))
     const json = JSON.parse(response)
-    await incrementSearchAnalytics()
     return json
 }
 
 const getProductPrice = async (spuId) => {
+    await incrementPriceAnalytics()
     var options = {
         method: "GET",
         url: `https://poison-api.com/Dewu/priceInfo?spuId=${spuId}`,
@@ -46,7 +47,6 @@ const getProductPrice = async (spuId) => {
     };
     const response = await limiter.schedule(() => request(options))
     const json = JSON.parse(response)
-    await incrementPriceAnalytics()
     return json
 };
 
