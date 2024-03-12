@@ -376,10 +376,7 @@ const getAnalytics = async () => {
     const docs = await collection
         .find()
         .project({
-            date: 1,
-            [config.analytics.pricesKey]: 1,
-            [config.analytics.productInfoKey]: 1,
-            [config.analytics.searchKey]: 1,
+            _id: 0
         })
         .sort({ date: -1 })
         .limit(10)
