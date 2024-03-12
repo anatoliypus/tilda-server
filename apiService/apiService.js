@@ -1,7 +1,6 @@
 const { config } = require("../config");
 const request = require("request-promise");
 const Bottleneck = require("bottleneck/es5");
-const { incrementProductInfoAnalytics, incrementSearchAnalytics, incrementPriceAnalytics } = require("../db/db");
 
 const limiter = new Bottleneck({
     maxConcurrent: config.poizonApi.maxConcurrentRequests,
@@ -9,7 +8,6 @@ const limiter = new Bottleneck({
   });
 
 const getProductDetail = async (spuId) => {
-    await incrementProductInfoAnalytics()
     var options = {
         method: "GET",
         url: `https://poison-api.com/Dewu/productDetail?spuId=${spuId}`,
@@ -23,7 +21,6 @@ const getProductDetail = async (spuId) => {
 }
 
 const searchProductsPoizon = async (key, page, pageSize) => {
-    await incrementSearchAnalytics()
     var options = {
         method: "GET",
         url: `https://poison-api.com/Dewu/search?keyword=${key}&limit=${pageSize}&page=${page}`,
@@ -37,7 +34,6 @@ const searchProductsPoizon = async (key, page, pageSize) => {
 }
 
 const getProductPrice = async (spuId) => {
-    await incrementPriceAnalytics()
     var options = {
         method: "GET",
         url: `https://poison-api.com/Dewu/priceInfo?spuId=${spuId}`,

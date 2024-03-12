@@ -33,6 +33,7 @@ const updatePrices = async (items, cache = true) => {
                         Date.now() - item.apiPricesUpdated >
                             config.db.pricesCache)
                 ) {
+                    await incrementPriceAnalytics()
                     const prices = await getProductPrice(item.productId);
                     const priceResult = {};
                     const variantIdSizeMapping =
@@ -338,15 +339,15 @@ const incrementAnalytics = async (key) => {
 }
  
 const incrementPriceAnalytics = async () => {
-    incrementAnalytics(config.analytics.pricesKey)
+    await incrementAnalytics(config.analytics.pricesKey)
 }
 
 const incrementProductInfoAnalytics = async () => {
-    incrementAnalytics(config.analytics.productInfoKey)
+    await incrementAnalytics(config.analytics.productInfoKey)
 }
 
 const incrementSearchAnalytics = async () => {
-    incrementAnalytics(config.analytics.searchKey)
+    await incrementAnalytics(config.analytics.searchKey)
 }
 
 const getPaginatedCatalog = async (
