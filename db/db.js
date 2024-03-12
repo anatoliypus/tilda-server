@@ -350,6 +350,12 @@ const incrementSearchAnalytics = async () => {
     await incrementAnalytics(config.analytics.searchKey)
 }
 
+const getAnalytics = async () => {
+    const collection = db.collection(config.db.collections.analytics);
+    const docs = await collection.find().sort({date: -1}).limit(10).toArray()
+    return docs
+}
+
 const getPaginatedCatalog = async (
     page,
     pageSize,
@@ -378,5 +384,6 @@ module.exports = {
     getHints,
     incrementPriceAnalytics,
     incrementProductInfoAnalytics,
-    incrementSearchAnalytics
+    incrementSearchAnalytics,
+    getAnalytics
 };

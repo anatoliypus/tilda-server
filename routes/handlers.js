@@ -7,6 +7,7 @@ const {
     getBrandsList,
     getCategoryLevel,
     getHints,
+    getAnalytics,
 } = require("../db/db");
 
 const catalogHandler = async (
@@ -87,6 +88,11 @@ const hintsHandler = async (key) => {
     return hints;
 };
 
+const analyticsHandler = async (key) => {
+    const analytics = await getAnalytics();
+    return analytics;
+};
+
 module.exports = {
     catalogHandler,
     searchHandler,
@@ -94,4 +100,5 @@ module.exports = {
     // searchPoizonHandler,
     brandsHandler,
     hintsHandler,
+    analyticsHandler
 };
