@@ -186,6 +186,10 @@ router.get("/demoPrices", async (req, res) => {
     res.sendFile(config.server.demoHTML);
 });
 
+router.get("/viewAnalytics", async (req, res) => {
+    res.sendFile(config.server.analyticsPage);
+});
+
 router.get("/setRates", async (req, res) => {
     res.sendFile(config.rates.file);
 });
