@@ -1,8 +1,6 @@
 const { MongoClient } = require("mongodb");
 const { config } = require("../config");
-const {
-    getProductPrice,
-} = require("../apiService/apiService");
+const { getProductPrice } = require("../apiService/apiService");
 const { calculatePrice } = require("../utils/pricing");
 
 const connectionUrl = config.db.url;
@@ -33,7 +31,7 @@ const updatePrices = async (items, cache = true) => {
                         Date.now() - item.apiPricesUpdated >
                             config.db.pricesCache)
                 ) {
-                    await incrementPriceAnalytics()
+                    await incrementPriceAnalytics();
                     const prices = await getProductPrice(item.productId);
                     const priceResult = {};
                     const variantIdSizeMapping =
@@ -106,38 +104,40 @@ const checkIfCategoryHasItems = async (categoryId) => {
         categoryId: { $eq: categoryId },
     };
     const result = await collection.findOne(query);
-    return Boolean(result)
-}
+    return Boolean(result);
+};
 
-const getCategoryLevel = async (parentCategory=null) => {
+const getCategoryLevel = async (parentCategory = null) => {
     const collection = db.collection(config.db.collections.categories);
     if (!parentCategory) {
-        const result = await collection.find({ "parentId" : { "$exists" : false }, "unused": { "$exists" : false }}).toArray();
-        return result
+        const result = await collection
+            .find({ parentId: { $exists: false }, unused: { $exists: false } })
+            .toArray();
+        return result;
     } else {
-        const result = await getChildCategories(parentCategory, 1)
-        const filteredResult = []
+        const result = await getChildCategories(parentCategory, 1);
+        const filteredResult = [];
         for (let r of result) {
-            const categoryItSelf = await checkIfCategoryHasItems(r.id)
+            const categoryItSelf = await checkIfCategoryHasItems(r.id);
             if (categoryItSelf) {
-                filteredResult.push(r)
-                continue
+                filteredResult.push(r);
+                continue;
             }
-            const childs = await getChildCategories(r.id, 1)
+            const childs = await getChildCategories(r.id, 1);
             for (let ch of childs) {
-                const childHasItems = await checkIfCategoryHasItems(ch.id)
+                const childHasItems = await checkIfCategoryHasItems(ch.id);
                 if (childHasItems) {
-                    filteredResult.push(r)
-                    break
+                    filteredResult.push(r);
+                    break;
                 }
             }
         }
 
-        return filteredResult
+        return filteredResult;
     }
-}
+};
 
-const getChildCategories = async (parentCategory, maxDepth=20) => {
+const getChildCategories = async (parentCategory, maxDepth = 20) => {
     let match = {
         id: parentCategory,
     };
@@ -158,7 +158,7 @@ const getChildCategories = async (parentCategory, maxDepth=20) => {
                 connectFromField: "id",
                 connectToField: "parentId",
                 as: "childs",
-                maxDepth
+                maxDepth,
             },
         },
         {
@@ -199,8 +199,12 @@ const baseGetProducts = async (
 
         genderParameter.$or.push({ gender: { $eq: config.genders.db.baby } });
         genderParameter.$or.push({ gender: { $eq: config.genders.db.child } });
-        genderParameter.$or.push({ gender: { $eq: config.genders.db.eldestChild } });
-        genderParameter.$or.push({ gender: { $eq: config.genders.db.middleChild } });
+        genderParameter.$or.push({
+            gender: { $eq: config.genders.db.eldestChild },
+        });
+        genderParameter.$or.push({
+            gender: { $eq: config.genders.db.middleChild },
+        });
     }
 
     let matchParameter = {
@@ -215,8 +219,8 @@ const baseGetProducts = async (
     if (category) {
         const childs = await getChildCategories(category);
         const ids = childs.map((v) => v.id);
-        ids.push(category)
-        
+        ids.push(category);
+
         if (ids.length == 1) {
             matchParameter.$and.push({
                 categoryId: { $eq: ids[0] },
@@ -226,7 +230,6 @@ const baseGetProducts = async (
                 categoryId: { $in: ids },
             });
         }
-        
     }
 
     if (brand) {
@@ -256,7 +259,7 @@ const baseGetProducts = async (
                             apiPrices: 1,
                             apiPricesUpdated: 1,
                             variantIdSizeMapping: 1,
-                            properties: 1
+                            properties: 1,
                         },
                     },
                 ],
@@ -268,16 +271,32 @@ const baseGetProducts = async (
     return products[0].data;
 };
 
-const searchProducts = async (key, page, pageSize, gender, category, sort, brand) => {
-    return baseGetProducts(page, pageSize, gender, { key, category, sort, brand });
+const searchProducts = async (
+    key,
+    page,
+    pageSize,
+    gender,
+    category,
+    sort,
+    brand
+) => {
+    return baseGetProducts(page, pageSize, gender, {
+        key,
+        category,
+        sort,
+        brand,
+    });
 };
 
 const clearPrices = async () => {
     const collection = db.collection(config.db.collections.products);
-    await collection.updateMany({}, {
-        $unset: {apiPrices: "", apiPricesUpdated: ""}
-    })
-}
+    await collection.updateMany(
+        {},
+        {
+            $unset: { apiPrices: "", apiPricesUpdated: "" },
+        }
+    );
+};
 
 const getBrandsList = async () => {
     const collection = db.collection(config.db.collections.brands);
@@ -287,14 +306,16 @@ const getBrandsList = async () => {
 
 const getHints = async (key) => {
     const categoryCollection = db.collection(config.db.collections.categories);
-    let categoryResult = await categoryCollection.find({name: {$regex: key, $options: 'i'}}).toArray();
+    let categoryResult = await categoryCollection
+        .find({ name: { $regex: key, $options: "i" } })
+        .toArray();
     categoryResult = categoryResult.map((v) => {
-        return {...v, type: 'category'}
-    })
-    const filteredCategoryResult = []
+        return { ...v, type: "category" };
+    });
+    const filteredCategoryResult = [];
     for (const cat of categoryResult) {
-        const result = await checkIfCategoryHasItems(cat.id)
-        if (result) filteredCategoryResult.push(cat)
+        const result = await checkIfCategoryHasItems(cat.id);
+        if (result) filteredCategoryResult.push(cat);
     }
     return filteredCategoryResult;
 };
@@ -318,43 +339,53 @@ const getProductInfo = async (id) => {
 };
 
 const getCurrentDateString = () => {
-    return new Date().toLocaleString('ru-RU', {dateStyle: 'short'})
-}
+    return new Date().toLocaleString("ru-RU", { dateStyle: "short" });
+};
 
 const incrementAnalytics = async (key) => {
     const collection = db.collection(config.db.collections.analytics);
 
     const filter = { date: getCurrentDateString() };
-    let found = await collection.findOne(filter)
-    found = Boolean(found)
+    let found = await collection.findOne(filter);
+    found = Boolean(found);
 
     if (found) {
         const updateDocument = {
-            $inc: { [key]: 1,  }
+            $inc: { [key]: 1 },
         };
         await collection.updateOne(filter, updateDocument);
     } else {
-        await collection.insertOne({date: getCurrentDateString(), [key]: 1})
+        await collection.insertOne({ date: getCurrentDateString(), [key]: 1 });
     }
-}
- 
+};
+
 const incrementPriceAnalytics = async () => {
-    await incrementAnalytics(config.analytics.pricesKey)
-}
+    await incrementAnalytics(config.analytics.pricesKey);
+};
 
 const incrementProductInfoAnalytics = async () => {
-    await incrementAnalytics(config.analytics.productInfoKey)
-}
+    await incrementAnalytics(config.analytics.productInfoKey);
+};
 
 const incrementSearchAnalytics = async () => {
-    await incrementAnalytics(config.analytics.searchKey)
-}
+    await incrementAnalytics(config.analytics.searchKey);
+};
 
 const getAnalytics = async () => {
     const collection = db.collection(config.db.collections.analytics);
-    const docs = await collection.find().sort({date: -1}).limit(10).toArray()
-    return docs
-}
+    const docs = await collection
+        .find()
+        .project({
+            date: 1,
+            [config.analytics.pricesKey]: 1,
+            [config.analytics.productInfoKey]: 1,
+            [config.analytics.searchKey]: 1,
+        })
+        .sort({ date: -1 })
+        .limit(10)
+        .toArray();
+    return docs;
+};
 
 const getPaginatedCatalog = async (
     page,
@@ -385,5 +416,5 @@ module.exports = {
     incrementPriceAnalytics,
     incrementProductInfoAnalytics,
     incrementSearchAnalytics,
-    getAnalytics
+    getAnalytics,
 };
