@@ -1,6 +1,7 @@
 const { config } = require("../config");
 const request = require("request-promise");
 const Bottleneck = require("bottleneck/es5");
+const { incrementProductInfoAnalytics, incrementSearchAnalytics, incrementPriceAnalytics } = require("../db/db");
 
 const limiter = new Bottleneck({
     maxConcurrent: config.poizonApi.maxConcurrentRequests,
@@ -17,6 +18,7 @@ const getProductDetail = async (spuId) => {
     };
     const response = await limiter.schedule(() => request(options))
     const json = JSON.parse(response)
+    await incrementProductInfoAnalytics()
     return json
 }
 
@@ -30,6 +32,7 @@ const searchProductsPoizon = async (key, page, pageSize) => {
     };
     const response = await limiter.schedule(() => request(options))
     const json = JSON.parse(response)
+    await incrementSearchAnalytics()
     return json
 }
 
@@ -43,6 +46,7 @@ const getProductPrice = async (spuId) => {
     };
     const response = await limiter.schedule(() => request(options))
     const json = JSON.parse(response)
+    await incrementPriceAnalytics()
     return json
 };
 

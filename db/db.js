@@ -1,7 +1,6 @@
-const { MongoClient, ObjectId } = require("mongodb");
+const { MongoClient } = require("mongodb");
 const { config } = require("../config");
 const {
-    getProductDetail,
     getProductPrice,
 } = require("../apiService/apiService");
 const { calculatePrice } = require("../utils/pricing");
@@ -317,6 +316,39 @@ const getProductInfo = async (id) => {
     return result;
 };
 
+const getCurrentDateString = () => {
+    return new Date().toLocaleString('ru-RU', {dateStyle: 'short'})
+}
+
+const incrementAnalytics = async (key) => {
+    const collection = db.collection(config.db.collections.analytics);
+
+    const filter = { date: getCurrentDateString() };
+    let found = await collection.findOne(filter)
+    found = Boolean(found)
+
+    if (found) {
+        const updateDocument = {
+            $inc: { [key]: 1,  }
+        };
+        await collection.updateOne(filter, updateDocument);
+    } else {
+        await collection.insertOne({date: getCurrentDateString(), [key]: 1})
+    }
+}
+ 
+const incrementPriceAnalytics = async () => {
+    incrementAnalytics(config.analytics.pricesKey)
+}
+
+const incrementProductInfoAnalytics = async () => {
+    incrementAnalytics(config.analytics.productInfoKey)
+}
+
+const incrementSearchAnalytics = async () => {
+    incrementAnalytics(config.analytics.searchKey)
+}
+
 const getPaginatedCatalog = async (
     page,
     pageSize,
@@ -342,5 +374,8 @@ module.exports = {
     close,
     clearPrices,
     getCategoryLevel,
-    getHints
+    getHints,
+    incrementPriceAnalytics,
+    incrementProductInfoAnalytics,
+    incrementSearchAnalytics
 };
