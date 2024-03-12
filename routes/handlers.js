@@ -1,4 +1,4 @@
-const { searchProductsPoizon } = require("../apiService/apiService");
+// const { searchProductsPoizon } = require("../apiService/apiService");
 const {
     searchProducts,
     getProductInfo,
@@ -68,12 +68,12 @@ const brandsHandler = async () => {
     };
 };
 
-const searchPoizonHandler = async (key, page, pageSize) => {
-    let products = await searchProductsPoizon(key, page, pageSize);
-    return {
-        products: products.data,
-    };
-};
+// const searchPoizonHandler = async (key, page, pageSize) => {
+//     let products = await searchProductsPoizon(key, page, pageSize);
+//     return {
+//         products: products.data,
+//     };
+// };
 
 const itemHandler = async (id, cache) => {
     let product = await getProductInfo(id);
@@ -91,7 +91,7 @@ module.exports = {
     catalogHandler,
     searchHandler,
     itemHandler,
-    searchPoizonHandler,
+    // searchPoizonHandler,
     brandsHandler,
     hintsHandler,
 };
