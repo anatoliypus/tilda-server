@@ -145,10 +145,8 @@ router.post("/setRates", upload.single('file'), async (req, res) => {
     if (!req.file || !req.file.path) res.status(500).json(generateResponse(true, "неизвестная ошибка"));
     const sheet = xlsx.parse(req.file.path)[0].data
     const under2000 = sheet[3]
-    const more2000Less3000 = sheet[4]
-    const more3000 = sheet[5]
-    const more10000 = sheet[6]
-    if (!under2000.length || !more2000Less3000.length || !more3000.length || !more10000.length) res.status(400).json(generateResponse(true, "неправильный формат файла"));
+    const more2000 = sheet[4]
+    if (!under2000.length || !more2000.length) res.status(400).json(generateResponse(true, "неправильный формат файла"));
 
     try {
         const parseRow = (row) => {
@@ -157,15 +155,15 @@ router.post("/setRates", upload.single('file'), async (req, res) => {
                 chinaWork: parseFloat(row[4]),
                 shipping: parseFloat(row[5]),
                 fee: parseFloat(row[6]),
+                percent: parseFloat(row[7])
             }
         }
         const under2000Info = parseRow(under2000)
-        const more2000Less3000Info = parseRow(more2000Less3000)
-        const more3000Info = parseRow(more3000)
-        const more10000Info = parseRow(more10000)
+        const more2000Info = parseRow(more2000)
     
-        const result = {under2000Info, more2000Less3000Info, more3000Info, more10000Info}
+        const result = {under2000Info, more2000Info}
         const json = JSON.stringify(result)
+        
         fs.writeFileSync(path.join(__dirname, '..', 'utils', 'rates.json'), json)
         await clearPrices()
         res.status(200).json(generateResponse(false, "ok"));
