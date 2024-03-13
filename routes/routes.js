@@ -151,11 +151,11 @@ router.post("/setRates", upload.single('file'), async (req, res) => {
     try {
         const parseRow = (row) => {
             return {
-                rate: parseFloat(row[3]),
-                chinaWork: parseFloat(row[4]),
-                shipping: parseFloat(row[5]),
-                fee: parseFloat(row[6]),
-                percent: parseFloat(row[7])
+                rate: parseFloat(row[2]),
+                chinaWork: parseFloat(row[3]),
+                shipping: parseFloat(row[4]),
+                fee: parseFloat(row[5]),
+                percent: parseFloat(row[6])
             }
         }
         const under2000Info = parseRow(under2000)
@@ -163,7 +163,7 @@ router.post("/setRates", upload.single('file'), async (req, res) => {
     
         const result = {under2000Info, more2000Info}
         const json = JSON.stringify(result)
-        
+
         fs.writeFileSync(path.join(__dirname, '..', 'utils', 'rates.json'), json)
         await clearPrices()
         res.status(200).json(generateResponse(false, "ok"));
