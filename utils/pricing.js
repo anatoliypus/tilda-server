@@ -22,6 +22,8 @@ const calculatePrice = (priceYuan) => {
         const fee = priceInfo.under2000Info.fee;
         const percent = priceInfo.under2000Info.percent;
 
+        console.log(percent)
+
         const withoutPercent =
             priceYuan * yuanRub +
             priceYuan * yuanRub * chinaWorkPercent +
@@ -37,6 +39,8 @@ const calculatePrice = (priceYuan) => {
         const shippingRub = priceInfo.more2000Info.shipping;
         const fee = priceInfo.more2000Info.fee;
         const percent = priceInfo.more2000Info.percent;
+
+        console.log(percent)
 
         const withoutPercentAndFee =
             priceYuan * yuanRub +
