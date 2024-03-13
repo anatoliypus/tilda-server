@@ -22,6 +22,7 @@ const calculatePrice = (priceYuan) => {
         const fee = priceInfo.under2000Info.fee;
         const percent = priceInfo.under2000Info.percent;
 
+        console.log(fee)
         console.log(percent)
 
         const withoutPercent =
@@ -40,6 +41,7 @@ const calculatePrice = (priceYuan) => {
         const fee = priceInfo.more2000Info.fee;
         const percent = priceInfo.more2000Info.percent;
 
+        console.log(fee)
         console.log(percent)
 
         const withoutPercentAndFee =
