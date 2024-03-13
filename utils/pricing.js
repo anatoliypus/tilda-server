@@ -37,13 +37,15 @@ const calculatePrice = (priceYuan) => {
         const fee = priceInfo.more2000Info.fee;
         const percent = priceInfo.more2000Info.percent;
 
-        const withoutPercentAndFee =
-            priceYuan * yuanRub +
-            priceYuan * yuanRub * chinaWorkPercent +
-            shippingRub
+        const comission = priceYuan * yuanRub * fee * (1 +
+            chinaWorkPercent)
+
+        const withoutPercent = priceYuan * yuanRub * (1 +
+            chinaWorkPercent) + shippingRub + comission
+
+        const percentValue = withoutPercent * percent
         
-        const withFee = withoutPercentAndFee + withoutPercentAndFee * fee
-        const result = Math.ceil(withFee + withFee * percent)
+        const result = Math.ceil(withoutPercent + percentValue)
         return result;
     }
 };
