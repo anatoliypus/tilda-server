@@ -27,8 +27,9 @@ const calculatePrice = (priceYuan) => {
             priceYuan * yuanRub * chinaWorkPercent +
             shippingRub +
             fee;
-
-        return Math.ceil(withoutPercent + withoutPercent * percent);
+        const result = Math.ceil(withoutPercent + withoutPercent * percent)
+        console.log(result)
+        return result;
     } else {
         // больше 2000 юаней
         const yuanRub = priceInfo.more2000Info.rate;
@@ -43,8 +44,9 @@ const calculatePrice = (priceYuan) => {
             shippingRub
         
         const withFee = withoutPercentAndFee + withoutPercentAndFee * fee
-
-        return Math.ceil(withFee + withFee * percent);
+        const result = Math.ceil(withFee + withFee * percent)
+        console.log(result)
+        return result;
     }
 };
 
