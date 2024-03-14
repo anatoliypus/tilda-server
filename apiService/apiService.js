@@ -37,24 +37,26 @@ const getProductPriceOnlyId = async (spuId) => {
     const priceInfo = await getProductPrice(spuId);
     const productDetail = await getProductDetail(spuId);
 
-    const propertiesObj = productDetail.data.image.spuImage.arSkuIdRelation;
+    const propertiesObj = productDetail.data.skus;
     const saleProperties = productDetail.data.saleProperties.list;
 
     const priceInfoByPropId = {};
 
     propertiesObj.forEach((prop) => {
         const sku = prop.skuId;
-        const propId = prop.propertyValueId;
-        if (priceInfo[sku]) priceInfoByPropId[propId] = priceInfo[sku];
-    });
+        const propValueId = prop.properties[prop.properties.length - 1].propertyValueId;
 
+        if (priceInfo[sku]) priceInfoByPropId[propValueId] = priceInfo[sku];
+    });
+    
+    
     saleProperties.forEach((saleProp) => {
         if (priceInfoByPropId[saleProp.propertyValueId]) {
             priceInfoByPropId[saleProp.propertyValueId].sizeValue =
-                saleProp.value;
+            saleProp.value;
         }
     });
-
+    
     const sizePriceMapping = {}
 
     for (const key in priceInfoByPropId) {
