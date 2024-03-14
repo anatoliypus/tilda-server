@@ -4,8 +4,8 @@ const Bottleneck = require("bottleneck/es5");
 
 const limiter = new Bottleneck({
     maxConcurrent: config.poizonApi.maxConcurrentRequests,
-    minTime: config.poizonApi.apiDelay
-  });
+    minTime: config.poizonApi.apiDelay,
+});
 
 const getProductDetail = async (spuId) => {
     var options = {
@@ -15,10 +15,10 @@ const getProductDetail = async (spuId) => {
             apiKey: config.poizonApi.apiKey,
         },
     };
-    const response = await limiter.schedule(() => request(options))
-    const json = JSON.parse(response)
-    return json
-}
+    const response = await limiter.schedule(() => request(options));
+    const json = JSON.parse(response);
+    return json;
+};
 
 const searchProductsPoizon = async (key, page, pageSize) => {
     var options = {
@@ -28,10 +28,49 @@ const searchProductsPoizon = async (key, page, pageSize) => {
             apiKey: config.poizonApi.apiKey,
         },
     };
-    const response = await limiter.schedule(() => request(options))
-    const json = JSON.parse(response)
-    return json
-}
+    const response = await limiter.schedule(() => request(options));
+    const json = JSON.parse(response);
+    return json;
+};
+
+const getProductPriceOnlyId = async (spuId) => {
+    const priceInfo = await getProductPrice(spuId);
+    const productDetail = await getProductDetail(spuId);
+
+    const propertiesObj = productDetail.data.image.spuImage.arSkuIdRelation;
+    const saleProperties = productDetail.data.saleProperties.list;
+
+    const priceInfoByPropId = {};
+
+    propertiesObj.forEach((prop) => {
+        const sku = prop.skuId;
+        const propId = prop.propertyValueId;
+        if (priceInfo[sku]) priceInfoByPropId[propId] = priceInfo[sku];
+    });
+
+    saleProperties.forEach((saleProp) => {
+        if (priceInfoByPropId[saleProp.propertyValueId]) {
+            priceInfoByPropId[saleProp.propertyValueId].sizeValue =
+                saleProp.value;
+        }
+    });
+
+    const sizePriceMapping = {}
+
+    for (const key in priceInfoByPropId) {
+        if (
+            priceInfoByPropId[key].prices &&
+            priceInfoByPropId[key].prices.length &&
+            priceInfoByPropId[key].prices[0].tradeType &&
+            priceInfoByPropId[key].prices[0].tradeType != 95 &&
+            priceInfoByPropId[key].prices[0].price
+        ) {
+            sizePriceMapping[priceInfoByPropId[key].sizeValue] = priceInfoByPropId[key].prices[0].price
+        }
+    }
+
+    return sizePriceMapping
+};
 
 const getProductPrice = async (spuId) => {
     var options = {
@@ -41,9 +80,9 @@ const getProductPrice = async (spuId) => {
             apiKey: config.poizonApi.apiKey,
         },
     };
-    const response = await limiter.schedule(() => request(options))
-    const json = JSON.parse(response)
-    return json
+    const response = await limiter.schedule(() => request(options));
+    const json = JSON.parse(response);
+    return json;
 };
 
-module.exports = {getProductDetail, getProductPrice, searchProductsPoizon}
+module.exports = { getProductDetail, getProductPrice, searchProductsPoizon, getProductPriceOnlyId };

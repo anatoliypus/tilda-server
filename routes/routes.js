@@ -15,8 +15,9 @@ const {
 const { config } = require("../config");
 const fs = require("node:fs");
 const path = require("node:path");
-const { clearPrices } = require("../db/db");
+const { clearPrices, incrementPriceAnalytics } = require("../db/db");
 const { calculatePrice } = require("../utils/pricing");
+const { getProductPriceOnlyId } = require("../apiService/apiService");
 
 const router = express.Router();
 
@@ -120,7 +121,7 @@ router.get("/search", async (req, res) => {
 
 router.get("/hints", async (req, res) => {
     const key = req.query.key || null
-    if (!key) res.status(403).json(generateResponse(true, "не задан ключ для поиска"));
+    if (!key) return res.status(403).json(generateResponse(true, "не задан ключ для поиска"));
     res.status(200).json(generateResponse(false, "ok", await hintsHandler(key)));
 })
 
@@ -130,9 +131,21 @@ router.get("/analytics", async (req, res) => {
 
 router.get("/calculatePrice", async (req, res) => {
     const price = toPositiveInt(req.query.price) || null
-    if (!price) res.status(403).json(generateResponse(true, "не задана цена"));
+    if (!price) return res.status(403).json(generateResponse(true, "не задана цена"));
     res.status(200).json(generateResponse(false, "ok", {
         price: calculatePrice(price)
+    }));
+})
+
+router.get("/getPriceById", async (req, res) => {
+    const id = toPositiveInt(req.query.id) || null
+    
+    await incrementPriceAnalytics()
+    await incrementPriceAnalytics()
+
+    if (!id) return res.status(403).json(generateResponse(true, "не задан spuid"));
+    res.status(200).json(generateResponse(false, "ok", {
+        prices: await getProductPriceOnlyId(id)
     }));
 })
 
@@ -168,7 +181,7 @@ router.post("/setRates", upload.single('file'), async (req, res) => {
         await clearPrices()
         res.status(200).json(generateResponse(false, "ok"));
     } catch(e) {
-        res.status(400).json(generateResponse(true, "ошибка чтения файла"));
+        return res.status(400).json(generateResponse(true, "ошибка чтения файла"));
     }
 });
 
@@ -193,7 +206,7 @@ router.get("/setRates", async (req, res) => {
 });
 
 router.all("*", function (req, res) {
-    res.status(404).json(generateResponse(true, "Unknown route"));
+    return res.status(404).json(generateResponse(true, "Unknown route"));
 });
 
 module.exports = router;
