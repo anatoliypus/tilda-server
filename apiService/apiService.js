@@ -15,7 +15,8 @@ const getProductDetail = async (spuId) => {
             apiKey: config.poizonApi.apiKey,
         },
     };
-    const response = await limiter.schedule(() => request(options));
+    // const response = await limiter.schedule(() => request(options));
+    const response = await request(options);
     const json = JSON.parse(response);
     return json;
 };
@@ -28,7 +29,8 @@ const searchProductsPoizon = async (key, page, pageSize) => {
             apiKey: config.poizonApi.apiKey,
         },
     };
-    const response = await limiter.schedule(() => request(options));
+    // const response = await limiter.schedule(() => request(options));
+    const response = await request(options);
     const json = JSON.parse(response);
     return json;
 };
@@ -82,7 +84,8 @@ const getProductPrice = async (spuId) => {
             apiKey: config.poizonApi.apiKey,
         },
     };
-    const response = await limiter.schedule(() => request(options));
+    // const response = await limiter.schedule(() => request(options));
+    const response = await request(options);
     const json = JSON.parse(response);
     return json;
 };

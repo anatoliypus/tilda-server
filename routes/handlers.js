@@ -34,7 +34,7 @@ const catalogHandler = async (
         let categories = await getCategoryLevel(category);
         result.categories = categories
     }
-    // products = await updatePrices(products)
+    products = await updatePrices(products)
     return result
 };
 
@@ -56,7 +56,7 @@ const searchHandler = async (
         sort,
         brand
     );
-    // products = await updatePrices(products)
+    products = await updatePrices(products)
     return {
         products,
     };

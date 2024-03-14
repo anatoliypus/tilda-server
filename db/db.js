@@ -41,7 +41,7 @@ const updatePrices = async (items, cache = true) => {
                         let sizeText = variantIdSizeMapping[variantId];
                         if (!sizeText) {
                             const variant = await getProductVariant(variantId);
-                            if (variant.params && variant.params.length) {
+                            if (variant && variant.params && variant.params.length) {
                                 const size = variant.params.find(
                                     (v) => v.key && v.key == "размер"
                                 );
@@ -184,7 +184,9 @@ const baseGetProducts = async (
     { category, key, sort, brand } = {}
 ) => {
     const collection = db.collection(config.db.collections.products);
-    await collection.createIndex({ title: "text" });
+    try {
+        await collection.createIndex({ title: "text" });
+    } catch (e) {}
 
     let genderParameter = {
         $or: [{ gender: { $eq: config.genders.db.all } }],
