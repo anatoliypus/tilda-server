@@ -7,10 +7,10 @@ const {
     catalogHandler,
     itemHandler,
     searchHandler,
-    // searchPoizonHandler,
     brandsHandler,
     hintsHandler,
-    analyticsHandler
+    analyticsHandler,
+    searchPoizonHandler
 } = require("./handlers");
 const { config } = require("../config");
 const fs = require("node:fs");
@@ -67,23 +67,23 @@ router.get("/product", async (req, res) => {
     );
 });
 
-// router.get("/searchPoizon", async (req, res) => {
-//     let key = req.query.key;
-//     let page = 0;
-//     let pageSize = 5;
+router.get("/searchPoizon", async (req, res) => {
+    let key = req.query.key;
+    let page = 0;
+    let pageSize = 5;
 
-//     if (!key)
-//         return res
-//             .status(400)
-//             .json(generateResponse(true, "Please specify right search key."));
-//     res.status(200).json(
-//         generateResponse(
-//             false,
-//             "ok",
-//             await searchPoizonHandler(key, page, pageSize)
-//         )
-//     );
-// });
+    if (!key)
+        return res
+            .status(400)
+            .json(generateResponse(true, "Please specify right search key."));
+    res.status(200).json(
+        generateResponse(
+            false,
+            "ok",
+            await searchPoizonHandler(key, page, pageSize)
+        )
+    );
+});
 
 router.get("/search", async (req, res) => {
     let key = req.query.key;
