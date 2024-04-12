@@ -1,4 +1,5 @@
 const { searchProductsPoizon } = require("../apiService/apiService");
+const { config } = require("../config");
 const {
     searchProducts,
     getProductInfo,
@@ -34,7 +35,7 @@ const catalogHandler = async (
         let categories = await getCategoryLevel(category);
         result.categories = categories
     }
-    products = await updatePrices(products)
+    if (config.usage.catalogPriceUpdate) products = await updatePrices(products)
     return result
 };
 
@@ -56,7 +57,7 @@ const searchHandler = async (
         sort,
         brand
     );
-    products = await updatePrices(products)
+    if (config.usage.searchPriceUpdate) products = await updatePrices(products)
     return {
         products,
     };
@@ -78,9 +79,22 @@ const searchPoizonHandler = async (key, page, pageSize) => {
 
 const itemHandler = async (id, cache) => {
     let product = await getProductInfo(id);
+
+    if (config.usage.productInfoPriceUpdate) {
+        product = await updatePrices([product], cache);
+        product = product[0];
+    }
+
+    return product;
+};
+
+const priceHandler = async (id, cache) => {
+    let product = await getProductInfo(id);
+
     product = await updatePrices([product], cache);
     product = product[0];
-    return product;
+
+    return product.apiPrices;
 };
 
 const hintsHandler = async (key) => {
@@ -100,5 +114,6 @@ module.exports = {
     searchPoizonHandler,
     brandsHandler,
     hintsHandler,
-    analyticsHandler
+    analyticsHandler,
+    priceHandler
 };

@@ -26,6 +26,7 @@ const updatePrices = async (items, cache = true) => {
                 if (
                     item &&
                     (!item.apiPrices ||
+                        Object.keys(item.apiPrices).length == 0 ||
                         !item.apiPricesUpdated ||
                         !cache ||
                         Date.now() - item.apiPricesUpdated >

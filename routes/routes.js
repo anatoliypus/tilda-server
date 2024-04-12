@@ -10,14 +10,15 @@ const {
     brandsHandler,
     hintsHandler,
     analyticsHandler,
-    searchPoizonHandler
+    searchPoizonHandler,
+    priceHandler
 } = require("./handlers");
 const { config } = require("../config");
 const fs = require("node:fs");
 const path = require("node:path");
 const { clearPrices, incrementPriceAnalytics } = require("../db/db");
 const { calculatePrice } = require("../utils/pricing");
-const { getProductPriceOnlyId } = require("../apiService/apiService");
+const { getProductPriceOnlyId, getProductPriceRange } = require("../apiService/apiService");
 
 const router = express.Router();
 
@@ -140,12 +141,24 @@ router.get("/calculatePrice", async (req, res) => {
 router.get("/getPriceById", async (req, res) => {
     const id = toPositiveInt(req.query.id) || null
     
-    await incrementPriceAnalytics()
+    if (!id) return res.status(403).json(generateResponse(true, "не задан spuid"));
+    
     await incrementPriceAnalytics()
 
-    if (!id) return res.status(403).json(generateResponse(true, "не задан spuid"));
     res.status(200).json(generateResponse(false, "ok", {
-        prices: await getProductPriceOnlyId(id)
+        prices: await priceHandler(id, false)
+    }));
+})
+
+router.get("/getProductPriceRange", async (req, res) => {
+    const id = toPositiveInt(req.query.id) || null
+    
+    if (!id) return res.status(403).json(generateResponse(true, "не задан spuid"));
+    
+    await incrementPriceAnalytics()
+
+    res.status(200).json(generateResponse(false, "ok", {
+        prices: await getProductPriceRange(id)
     }));
 })
 
