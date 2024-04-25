@@ -116,6 +116,10 @@ const getCategoryLevel = async (parentCategory = null) => {
             .toArray();
         return result;
     } else {
+        const cacheCollection = db.collection(config.db.collections.categoriesLevelsCache)
+        const cache = await cacheCollection.find({parentCategory}).toArray()
+        if (cache && cache.length == 1) return cache[0].data
+
         const result = await getChildCategories(parentCategory, 1);
         const filteredResult = [];
         for (let r of result) {
@@ -134,6 +138,7 @@ const getCategoryLevel = async (parentCategory = null) => {
             }
         }
 
+        cacheCollection.insertOne({parentCategory, data: filteredResult})
         return filteredResult;
     }
 };
